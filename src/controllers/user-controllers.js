@@ -14,7 +14,9 @@ const generateVerifyEmailToken = (user, randomPass) => {
 // Create user controller
 export const createUserController = async (req, res) => {
     try {
+        const emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
         const isEmailExist = await User.findOne({ email: req.body.email });
+        if (!emailRegex.test(req.body.email)) return res.status(401).json({ code: 403, message: 'Email không hợp lệ' });
         if (isEmailExist) return res.status(403).json({ code: 403, message: 'Email đã được sử dụng' });
         const randomPass = randomstring.generate(7);
         const salt = bcrypt.genSaltSync(10);
@@ -183,7 +185,7 @@ export const getAllUserController = async (req, res) => {
         if (!page) page = 1;
         if (!limit) limit = 5;
         const skip = (page - 1) * 5;
-        const users = await User.find(
+        let users = await User.find(
             search
                 ? {
                       $or: [
@@ -197,8 +199,20 @@ export const getAllUserController = async (req, res) => {
             .sort({ createdAt: -1 })
             .skip(skip)
             .limit(limit);
-        const allUsers = await User.find({});
-        res.status(200).json({ code: 200, data: users, usersLength: allUsers.length, allUsers: allUsers });
+        let allUsers = await User.find(
+            search
+                ? {
+                      $or: [
+                          { fullName: { $regex: search, $options: 'i' } },
+                          { email: { $regex: search, $options: 'i' } },
+                          { phoneNumber: { $regex: search, $options: 'i' } },
+                      ],
+                  }
+                : {},
+        );
+        users = users.filter((item) => item.role !== 'Admin');
+        allUsers = allUsers.filter((item) => item.role !== 'Admin');
+        res.status(200).json({ code: 200, data: users, allUsers: allUsers });
     } catch (error) {
         res.status(400).json({ code: 400, message: 'Unexpected error' });
     }

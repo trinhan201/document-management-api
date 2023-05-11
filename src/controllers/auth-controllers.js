@@ -112,14 +112,18 @@ export const refreshController = async (req, res) => {
 
 // Sign out controller
 export const signOutController = async (req, res) => {
-    const refreshToken = req.body.token;
-    const currUser = await User.findById(req.user._id);
-    let tokenArray = currUser.refreshTokens;
-    tokenArray = tokenArray.filter((token) => token !== refreshToken);
-    console.log(tokenArray);
+    try {
+        const refreshToken = req.body.token;
+        const currUser = await User.findById(req.user._id);
+        let tokenArray = currUser.refreshTokens;
+        tokenArray = tokenArray.filter((token) => token !== refreshToken);
+        // console.log(tokenArray);
 
-    await User.findByIdAndUpdate(req.user._id, { $set: { refreshTokens: tokenArray } });
-    res.status(200).json('You signed out successfully.');
+        await User.findByIdAndUpdate(req.user._id, { $set: { refreshTokens: tokenArray } });
+        res.status(200).json({ code: 200, message: 'Đăng xuất thành công' });
+    } catch (error) {
+        res.status(400).json({ code: 400, message: 'Unexpected error' });
+    }
 };
 
 // Forgot password controller
