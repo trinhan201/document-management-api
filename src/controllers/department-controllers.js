@@ -11,6 +11,7 @@ export const createDepartmentController = async (req, res) => {
         res.status(200).json({ code: 200, message: 'Phòng ban đã được tạo thành công', data: newDepartment });
     } catch (error) {
         res.status(400).json({ code: 400, message: 'Unexpected error' });
+        console.log(error);
     }
 };
 
@@ -32,6 +33,7 @@ export const updateDepartmentController = async (req, res) => {
         res.status(200).json({ code: 200, message: 'Phòng ban đã được cập nhật thành công', data: departmentUpdate });
     } catch (error) {
         res.status(400).json({ code: 400, message: 'Unexpected error' });
+        console.log(error);
     }
 };
 
@@ -47,6 +49,7 @@ export const activateDepartmentController = async (req, res) => {
         }
     } catch (error) {
         res.status(400).json({ code: 400, message: 'Unexpected error' });
+        console.log(error);
     }
 };
 
@@ -60,6 +63,7 @@ export const deleteDepartmentController = async (req, res) => {
         res.status(200).json({ code: 200, message: 'Phòng ban đã được xóa thành công' });
     } catch (error) {
         res.status(400).json({ code: 400, message: 'Unexpected error' });
+        console.log(error);
     }
 };
 
@@ -74,6 +78,7 @@ export const deleteManyDepartmentController = async (req, res) => {
         });
     } catch (error) {
         res.status(400).json({ code: 400, message: 'Unexpected error' });
+        console.log(error);
     }
 };
 
@@ -103,6 +108,7 @@ export const getAllDepartmentController = async (req, res) => {
         });
     } catch (error) {
         res.status(400).json({ code: 400, message: 'Unexpected error' });
+        console.log(error);
     }
 };
 
@@ -114,5 +120,6 @@ export const getDepartmentByIdController = async (req, res) => {
         res.status(200).json({ code: 200, data: department });
     } catch (error) {
         res.status(400).json({ code: 400, message: 'Unexpected error' });
+        console.log(error);
     }
 };

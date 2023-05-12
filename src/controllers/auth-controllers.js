@@ -47,6 +47,7 @@ export const verifyController = async (req, res) => {
         });
     } catch (error) {
         res.status(400).json({ code: 400, message: 'Unexpected error' });
+        console.log(error);
     }
 };
 
@@ -71,8 +72,9 @@ export const signInController = async (req, res) => {
             accessToken: accessToken,
             refreshToken: refreshToken,
         });
-    } catch (err) {
+    } catch (error) {
         res.status(400).json({ code: 400, message: 'Unexpected error' });
+        console.log(error);
     }
 };
 
@@ -83,6 +85,7 @@ export const getCurrentUserController = async (req, res) => {
         res.status(200).json(currentUser);
     } catch (error) {
         res.status(400).json({ code: 400, message: 'Unexpected error' });
+        console.log(error);
     }
 };
 
@@ -123,6 +126,7 @@ export const signOutController = async (req, res) => {
         res.status(200).json({ code: 200, message: 'Đăng xuất thành công' });
     } catch (error) {
         res.status(400).json({ code: 400, message: 'Unexpected error' });
+        console.log(error);
     }
 };
 
@@ -148,6 +152,7 @@ export const forgotPasswordController = async (req, res) => {
         }
     } catch (error) {
         res.status(400).json({ code: 400, message: 'Unexpected error' });
+        console.log(error);
     }
 };
 
@@ -168,5 +173,6 @@ export const resetPasswordController = async (req, res) => {
         });
     } catch (error) {
         res.status(400).json({ code: 400, message: 'Unexpected error' });
+        console.log(error);
     }
 };

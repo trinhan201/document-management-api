@@ -7,7 +7,7 @@ const DepartmentSchema = new Schema(
         departmentName: {
             type: String,
             required: true,
-            minlength: 2,
+            minlength: 1,
             maxlength: 100,
             trim: true,
             unique: true,
@@ -18,7 +18,6 @@ const DepartmentSchema = new Schema(
         },
         note: {
             type: String,
-            minlength: 2,
             maxlength: 120,
             trim: true,
         },

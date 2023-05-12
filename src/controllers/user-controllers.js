@@ -54,6 +54,7 @@ export const updateUserController = async (req, res) => {
                 res.status(200).json({ code: 200, message: 'Thông tin người dùng đã được cập nhật', data: userUpdate });
             } catch (error) {
                 res.status(400).json({ code: 400, message: 'Unexpected error' });
+                console.log(error);
             }
         } else {
             if (req.params.userId === req.user.id) {
@@ -74,8 +75,9 @@ export const updateUserController = async (req, res) => {
                 });
             }
         }
-    } catch (err) {
+    } catch (error) {
         res.status(400).json({ code: 400, message: 'Unexpected error' });
+        console.log(error);
     }
 };
 
@@ -86,6 +88,7 @@ export const updateRoleController = async (req, res) => {
         res.status(200).json({ code: 200, message: 'Thay đổi vai trò thành công' });
     } catch (error) {
         res.status(400).json({ code: 400, message: 'Unexpected error' });
+        console.log(error);
     }
 };
 
@@ -101,6 +104,7 @@ export const activateUserController = async (req, res) => {
         }
     } catch (error) {
         res.status(400).json({ code: 400, message: 'Unexpected error' });
+        console.log(error);
     }
 };
 
@@ -121,6 +125,7 @@ export const deleteUserController = async (req, res) => {
             });
         } catch (error) {
             res.status(400).json({ code: 400, message: 'Unexpected error' });
+            console.log(error);
         }
     }
 };
@@ -136,6 +141,7 @@ export const deleteManyUserController = async (req, res) => {
         });
     } catch (error) {
         res.status(400).json({ code: 400, message: 'Unexpected error' });
+        console.log(error);
     }
 };
 
@@ -215,6 +221,7 @@ export const getAllUserController = async (req, res) => {
         res.status(200).json({ code: 200, data: users, allUsers: allUsers });
     } catch (error) {
         res.status(400).json({ code: 400, message: 'Unexpected error' });
+        console.log(error);
     }
 };
 
@@ -228,5 +235,6 @@ export const getUserByIdController = async (req, res) => {
         res.status(200).json({ code: 200, data: user });
     } catch (error) {
         res.status(400).json({ code: 400, message: 'Unexpected error' });
+        console.log(error);
     }
 };
