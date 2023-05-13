@@ -9,7 +9,7 @@ import {
     getDepartmentByIdController,
 } from '../controllers/department-controllers.js';
 import { verifyToken } from '../middlewares/verifyToken.js';
-import { isAdmin } from '../middlewares/role.js';
+import { isAdmin, isMember } from '../middlewares/role.js';
 
 const router = Router();
 
@@ -29,7 +29,7 @@ router.delete('/delete/:departmentId', verifyToken, isAdmin, deleteDepartmentCon
 router.post('/delete-many', verifyToken, isAdmin, deleteManyDepartmentController);
 
 // Get all list department route
-router.get('/get-all', verifyToken, isAdmin, getAllDepartmentController);
+router.get('/get-all', verifyToken, isMember, getAllDepartmentController);
 
 // Get department by ID
 router.get('/get/:departmentId', verifyToken, isAdmin, getDepartmentByIdController);

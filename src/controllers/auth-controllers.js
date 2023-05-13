@@ -83,6 +83,8 @@ export const signInController = async (req, res) => {
 export const getCurrentUserController = async (req, res) => {
     try {
         const currentUser = await User.findById(req.user._id);
+        if (currentUser.isActived === false)
+            return res.status(403).json({ code: 403, message: 'Tài khoản tạm thời bị vô hiệu hóa' });
         res.status(200).json(currentUser);
     } catch (error) {
         res.status(400).json({ code: 400, message: 'Unexpected error' });

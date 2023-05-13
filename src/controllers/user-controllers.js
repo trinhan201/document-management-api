@@ -38,6 +38,9 @@ export const createUserController = async (req, res) => {
 // Update user controller
 export const updateUserController = async (req, res) => {
     try {
+        const currentUser = await User.findById(req.user._id);
+        if (currentUser.isActived === false)
+            return res.status(403).json({ code: 403, message: 'Tài khoản tạm thời bị vô hiệu hóa' });
         const updateProps = {
             fullName: req.body.fullName,
             gender: req.body.gender,
@@ -57,7 +60,7 @@ export const updateUserController = async (req, res) => {
                 console.log(error);
             }
         } else {
-            if (req.params.userId === req.user.id) {
+            if (req.params.userId === req.user._id) {
                 try {
                     const userUpdate = await User.findByIdAndUpdate(req.params.userId, updateProps, { new: true });
                     res.status(200).json({
@@ -149,6 +152,8 @@ export const deleteManyUserController = async (req, res) => {
 export const changePasswordController = async (req, res) => {
     try {
         const currentUser = await User.findById(req.user._id);
+        if (currentUser.isActived === false)
+            return res.status(403).json({ code: 403, message: 'Tài khoản tạm thời bị vô hiệu hóa' });
         // Old password from frontend
         const oldPassword = req.body.oldPassword;
         // New password from frontend

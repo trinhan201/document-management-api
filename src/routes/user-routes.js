@@ -11,7 +11,7 @@ import {
     deleteManyUserController,
 } from '../controllers/user-controllers.js';
 import { verifyToken } from '../middlewares/verifyToken.js';
-import { isAdmin, isModerator, isMember } from '../middlewares/role.js';
+import { isAdmin, isMember } from '../middlewares/role.js';
 
 const router = Router();
 
@@ -37,9 +37,9 @@ router.post('/delete-many', verifyToken, isAdmin, deleteManyUserController);
 router.patch('/change-password', verifyToken, isMember, changePasswordController);
 
 // Get all list users route
-router.get('/get-all', verifyToken, isModerator, getAllUserController);
+router.get('/get-all', verifyToken, isAdmin, getAllUserController);
 
 // Get user by ID route
-router.get('/get/:userId', verifyToken, isModerator, getUserByIdController);
+router.get('/get/:userId', verifyToken, isAdmin, getUserByIdController);
 
 export default router;
