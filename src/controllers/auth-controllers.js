@@ -55,7 +55,8 @@ export const verifyController = async (req, res) => {
 export const signInController = async (req, res) => {
     try {
         const user = await User.findOne({ email: req.body.email });
-        if (!user) return res.status(404).json({ code: 404, message: 'Không tìm thấy người dùng' });
+        if (!user || user.isActived === false)
+            return res.status(404).json({ code: 404, message: 'Tài khoản không tồn tại hoặc đã bị xóa' });
 
         const isCorrect = await bcrypt.compare(req.body.password, user.password);
 
