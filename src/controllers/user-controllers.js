@@ -2,6 +2,7 @@ import User from '../models/User.js';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import randomstring from 'randomstring';
+import fs from 'fs';
 import sendMail from '../utils/email.js';
 
 // Generate verify email token
@@ -242,4 +243,37 @@ export const getUserByIdController = async (req, res) => {
         res.status(400).json({ code: 400, message: 'Unexpected error' });
         console.log(error);
     }
+};
+
+// Change avatar controller
+export const changeAvatarController = async (req, res) => {
+    try {
+        const currentUser = await User.findById(req.user._id);
+        if (currentUser.isActived === false)
+            return res.status(403).json({ code: 403, message: 'Tài khoản tạm thời bị vô hiệu hóa' });
+        const userId = req.user._id;
+        const file = req.file;
+        const fileUrl = process.env.BASE_URL + `/static/${file.filename}`;
+        if (!file) return res.status(400).json({ code: 400, message: 'Hãy chọn 1 ảnh' });
+
+        await User.findOneAndUpdate({ _id: userId }, { avatar: fileUrl });
+        res.status(200).json({ code: 200, message: 'Thay đổi ảnh nền thành công', fileName: file.filename });
+    } catch (error) {
+        res.status(400).json({ code: 400, message: 'Unexpected error' });
+        console.log(error);
+    }
+};
+
+export const removeAvatar = (req, res) => {
+    const fileName = req.params.name;
+    const directoryPath = 'uploads/';
+
+    fs.unlink(directoryPath + fileName, (err) => {
+        if (err) {
+            res.status(500).json({ code: 500, message: 'Could not delete the file.' });
+            console.log(err);
+        }
+
+        res.status(200).json({ code: 200, message: 'File is deleted.' });
+    });
 };

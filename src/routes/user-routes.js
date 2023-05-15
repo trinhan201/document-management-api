@@ -9,9 +9,12 @@ import {
     getAllUserController,
     getUserByIdController,
     deleteManyUserController,
+    changeAvatarController,
+    removeAvatar,
 } from '../controllers/user-controllers.js';
 import { verifyToken } from '../middlewares/verifyToken.js';
 import { isAdmin, isMember } from '../middlewares/role.js';
+import upload from '../utils/uploadFile.js';
 
 const router = Router();
 
@@ -41,5 +44,10 @@ router.get('/get-all', verifyToken, isAdmin, getAllUserController);
 
 // Get user by ID route
 router.get('/get/:userId', verifyToken, isAdmin, getUserByIdController);
+
+// Change avatar route
+router.post('/change-avatar', verifyToken, upload.single('myFile'), changeAvatarController);
+
+router.delete('/file/:name', verifyToken, removeAvatar);
 
 export default router;

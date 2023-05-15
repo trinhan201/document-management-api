@@ -39,6 +39,11 @@ const UserSchema = new Schema(
             required: true,
             trim: true,
         },
+        avatar: {
+            type: String,
+            trim: true,
+            default: 'https://img.freepik.com/premium-vector/cute-orange-robot-cat-avatar_79416-86.jpg?w=2000',
+        },
         role: {
             type: String,
             default: 'Member',
