@@ -264,16 +264,18 @@ export const changeAvatarController = async (req, res) => {
     }
 };
 
-export const removeAvatar = (req, res) => {
+export const removeAvatar = async (req, res) => {
     const fileName = req.params.name;
     const directoryPath = 'uploads/';
+    const userId = req.user._id;
 
-    fs.unlink(directoryPath + fileName, (err) => {
+    fs.unlink(directoryPath + fileName, async (err) => {
         if (err) {
             res.status(500).json({ code: 500, message: 'Could not delete the file.' });
             console.log(err);
         }
 
-        res.status(200).json({ code: 200, message: 'File is deleted.' });
+        await User.findOneAndUpdate({ _id: userId }, { avatar: '' });
+        res.status(200).json({ code: 200, message: 'Đã xóa ảnh nền' });
     });
 };
