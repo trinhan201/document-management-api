@@ -140,14 +140,40 @@ export const deleteManyDocumentController = async (req, res) => {
 // Get all document controller
 export const getAllDocumentController = async (req, res) => {
     try {
-        let { page, limit } = req.query;
+        let { page, limit, documentName, code, type, status, level, sendDate } = req.query;
+        const queryFilters = {};
+
+        if (documentName) {
+            queryFilters.documentName = { $regex: documentName, $options: 'i' };
+        }
+
+        if (code) {
+            queryFilters.code = { $regex: code, $options: 'i' };
+        }
+
+        if (type) {
+            queryFilters.type = type;
+        }
+
+        if (status) {
+            queryFilters.status = status;
+        }
+
+        if (level) {
+            queryFilters.level = level;
+        }
+
+        if (sendDate) {
+            queryFilters.sendDate = sendDate;
+        }
+
         if (!page) page = 1;
         if (!limit) limit = 5;
         const skip = (page - 1) * 5;
 
-        const documents = await Document.find({}).sort({ createdAt: -1 }).skip(skip).limit(limit);
+        const documents = await Document.find(queryFilters).sort({ createdAt: -1 }).skip(skip).limit(limit);
 
-        const allDocuments = await Document.find({});
+        const allDocuments = await Document.find(queryFilters);
 
         const documentIn = documents.filter((dci) => dci.documentIn === true);
         const documentOut = documents.filter((dco) => dco.documentIn === false);
