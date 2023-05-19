@@ -6,6 +6,7 @@ import {
     changeDocumentStatusController,
     changeDocumentLocationController,
     deleteDocumentController,
+    deleteManyDocumentController,
     getAllDocumentController,
     getDocumentByIdController,
 } from '../controllers/document-controllers.js';
@@ -28,8 +29,11 @@ router.patch('/change-status/:documentId', changeDocumentStatusController);
 // Change document current location route
 router.patch('/change-location/:documentId', changeDocumentLocationController);
 
-// Delete permanently document route
+// Delete document route
 router.delete('/delete/:documentId', deleteDocumentController);
+
+// Delete many documents route
+router.post('/delete-many', deleteManyDocumentController);
 
 // Get all document route
 router.get('/get-all', getAllDocumentController);

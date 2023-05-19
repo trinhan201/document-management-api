@@ -25,6 +25,7 @@ const DocumentSchema = new Schema(
             minlength: 1,
             maxlength: 200,
             trim: true,
+            unique: true,
         },
         sender: {
             type: String,

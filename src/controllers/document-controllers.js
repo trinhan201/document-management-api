@@ -3,6 +3,8 @@ import Document from '../models/Document.js';
 // Create document controller
 export const createDocumentController = async (req, res) => {
     try {
+        const existCode = await Document.findOne({ code: req.body.code });
+        if (existCode) return res.status(403).json({ code: 403, message: 'Số ký hiệu không được trùng' });
         const newDocument = new Document(req.body);
 
         await newDocument.save();
@@ -25,7 +27,12 @@ export const uploadFileController = async (req, res) => {
             return process.env.BASE_URL + `/static/${file.filename}`;
         });
 
-        await Document.findOneAndUpdate({ _id: documentId }, { attachFiles: fileUrls });
+        const iterator = fileUrls.values();
+
+        for (const value of iterator) {
+            await Document.findOneAndUpdate({ _id: documentId }, { $push: { attachFiles: value } });
+        }
+
         res.status(200).json({ code: 200, message: 'Tải file thành công' });
     } catch (error) {
         res.status(400).json({ code: 400, message: 'Unexpected error' });
@@ -101,7 +108,7 @@ export const changeDocumentLocationController = async (req, res) => {
     }
 };
 
-// Delete permanently document controller
+// Delete document controller
 export const deleteDocumentController = async (req, res) => {
     try {
         const document = await Document.findById(req.params.documentId);
@@ -115,11 +122,45 @@ export const deleteDocumentController = async (req, res) => {
     }
 };
 
+// Delete many documents controller
+export const deleteManyDocumentController = async (req, res) => {
+    try {
+        const arrayId = req.body.arrayId;
+        await Document.deleteMany({ _id: arrayId });
+        res.status(200).json({
+            code: 200,
+            message: 'Những văn bản được chọn đã bị xóa',
+        });
+    } catch (error) {
+        res.status(400).json({ code: 400, message: 'Unexpected error' });
+        console.log(error);
+    }
+};
+
 // Get all document controller
 export const getAllDocumentController = async (req, res) => {
     try {
-        const documents = await Document.find({}).sort({ createdAt: -1 });
-        res.status(200).json({ code: 200, data: documents });
+        let { page, limit } = req.query;
+        if (!page) page = 1;
+        if (!limit) limit = 5;
+        const skip = (page - 1) * 5;
+
+        const documents = await Document.find({}).sort({ createdAt: -1 }).skip(skip).limit(limit);
+
+        const allDocuments = await Document.find({});
+
+        const documentIn = documents.filter((dci) => dci.documentIn === true);
+        const documentOut = documents.filter((dco) => dco.documentIn === false);
+
+        const allDocumentIn = allDocuments.filter((adci) => adci.documentIn === true);
+        const allDocumentOut = allDocuments.filter((adco) => adco.documentIn === false);
+        res.status(200).json({
+            code: 200,
+            documentIn: documentIn,
+            documentOut: documentOut,
+            allDocumentIn: allDocumentIn,
+            allDocumentOut: allDocumentOut,
+        });
     } catch (error) {
         res.status(400).json({ code: 400, message: 'Unexpected error' });
         console.log(error);
