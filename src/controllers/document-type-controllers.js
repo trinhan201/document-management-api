@@ -1,8 +1,12 @@
 import DocumentType from '../models/DocumentType.js';
+import User from '../models/User.js';
 
 // Create document type controller
 export const createDocumentTypeController = async (req, res) => {
     try {
+        const currentUser = await User.findById(req.user._id);
+        if (currentUser.isActived === false)
+            return res.status(403).json({ code: 403, message: 'Tài khoản tạm thời bị vô hiệu hóa' });
         const documentType = await DocumentType.findOne({ documentTypeName: req.body.documentTypeName });
         if (documentType) return res.status(403).json({ code: 403, message: 'Loại văn bản đã được sử dụng' });
         const newDocumentType = new DocumentType(req.body);
@@ -18,6 +22,9 @@ export const createDocumentTypeController = async (req, res) => {
 // Update document type controller
 export const updateDocumentTypeController = async (req, res) => {
     try {
+        const currentUser = await User.findById(req.user._id);
+        if (currentUser.isActived === false)
+            return res.status(403).json({ code: 403, message: 'Tài khoản tạm thời bị vô hiệu hóa' });
         const documentType = await DocumentType.findById(req.params.documentTypeId);
         if (!documentType) return res.status(404).json({ code: 404, message: 'Không tìm thấy loại văn bản' });
 
@@ -44,6 +51,9 @@ export const updateDocumentTypeController = async (req, res) => {
 // Activate document type controller
 export const activateDocumentTypeController = async (req, res) => {
     try {
+        const currentUser = await User.findById(req.user._id);
+        if (currentUser.isActived === false)
+            return res.status(403).json({ code: 403, message: 'Tài khoản tạm thời bị vô hiệu hóa' });
         const status = req.body.status;
         await DocumentType.findByIdAndUpdate(req.params.documentTypeId, { $set: { status: status } });
         if (status === true) {
@@ -60,6 +70,9 @@ export const activateDocumentTypeController = async (req, res) => {
 // Delete document type controller
 export const deleteDocumentTypeController = async (req, res) => {
     try {
+        const currentUser = await User.findById(req.user._id);
+        if (currentUser.isActived === false)
+            return res.status(403).json({ code: 403, message: 'Tài khoản tạm thời bị vô hiệu hóa' });
         const documentType = await DocumentType.findById(req.params.documentTypeId);
         if (!documentType) return res.status(404).json({ code: 404, message: 'Không tìm thấy loại văn bản' });
 
@@ -74,6 +87,9 @@ export const deleteDocumentTypeController = async (req, res) => {
 // Delete many document type permanently controller
 export const deleteManyDocumentTypeController = async (req, res) => {
     try {
+        const currentUser = await User.findById(req.user._id);
+        if (currentUser.isActived === false)
+            return res.status(403).json({ code: 403, message: 'Tài khoản tạm thời bị vô hiệu hóa' });
         const arrayId = req.body.arrayId;
         await DocumentType.deleteMany({ _id: arrayId });
         res.status(200).json({
@@ -89,6 +105,9 @@ export const deleteManyDocumentTypeController = async (req, res) => {
 // Get all list document type and pagination controller
 export const getAllDocumentTypeController = async (req, res) => {
     try {
+        const currentUser = await User.findById(req.user._id);
+        if (currentUser.isActived === false)
+            return res.status(403).json({ code: 403, message: 'Tài khoản tạm thời bị vô hiệu hóa' });
         let { page, limit, search } = req.query;
         if (!page) page = 1;
         if (!limit) limit = 5;
@@ -121,6 +140,9 @@ export const getAllDocumentTypeController = async (req, res) => {
 // Get document type by ID controller
 export const getDocumentTypeByIdController = async (req, res) => {
     try {
+        const currentUser = await User.findById(req.user._id);
+        if (currentUser.isActived === false)
+            return res.status(403).json({ code: 403, message: 'Tài khoản tạm thời bị vô hiệu hóa' });
         const documentType = await DocumentType.findById(req.params.documentTypeId);
         if (!documentType) return res.status(404).json({ code: 404, message: 'Không tìm thấy loại văn bản' });
         res.status(200).json({ code: 200, data: documentType });

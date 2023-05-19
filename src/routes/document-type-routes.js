@@ -9,29 +9,29 @@ import {
     getDocumentTypeByIdController,
 } from '../controllers/document-type-controllers.js';
 import { verifyToken } from '../middlewares/verifyToken.js';
-import { isAdmin, isMember } from '../middlewares/role.js';
+import { isModerator } from '../middlewares/role.js';
 
 const router = Router();
 
 // Create document type route
-router.post('/create', verifyToken, isAdmin, createDocumentTypeController);
+router.post('/create', verifyToken, isModerator, createDocumentTypeController);
 
 // Update document type route
-router.put('/update/:documentTypeId', verifyToken, isAdmin, updateDocumentTypeController);
+router.put('/update/:documentTypeId', verifyToken, isModerator, updateDocumentTypeController);
 
 // Activate document type route
-router.patch('/activate/:documentTypeId', verifyToken, isAdmin, activateDocumentTypeController);
+router.patch('/activate/:documentTypeId', verifyToken, isModerator, activateDocumentTypeController);
 
 // Delete department route
-router.delete('/delete/:documentTypeId', verifyToken, isAdmin, deleteDocumentTypeController);
+router.delete('/delete/:documentTypeId', verifyToken, isModerator, deleteDocumentTypeController);
 
 // Delete many departments permanently route
-router.post('/delete-many', verifyToken, isAdmin, deleteManyDocumentTypeController);
+router.post('/delete-many', verifyToken, isModerator, deleteManyDocumentTypeController);
 
 // Get all list department route
-router.get('/get-all', verifyToken, isAdmin, getAllDocumentTypeController);
+router.get('/get-all', verifyToken, isModerator, getAllDocumentTypeController);
 
 // Get department by ID
-router.get('/get/:documentTypeId', verifyToken, isAdmin, getDocumentTypeByIdController);
+router.get('/get/:documentTypeId', verifyToken, isModerator, getDocumentTypeByIdController);
 
 export default router;
