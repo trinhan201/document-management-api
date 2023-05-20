@@ -2,6 +2,7 @@ import { Router } from 'express';
 import {
     createDocumentController,
     uploadFileController,
+    deleteFileUrlController,
     updateDocumentController,
     changeDocumentStatusController,
     changeDocumentLocationController,
@@ -19,6 +20,9 @@ router.post('/create', createDocumentController);
 
 // Upload file route
 router.post('/upload/:documentId', upload.array('myFile', 10), uploadFileController);
+
+// Delete file url route
+router.patch('/delete-file-url/:documentId', deleteFileUrlController);
 
 // Update doucument route
 router.put('/update/:documentId', updateDocumentController);

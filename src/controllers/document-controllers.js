@@ -40,6 +40,21 @@ export const uploadFileController = async (req, res) => {
     }
 };
 
+// Delete file url controller
+export const deleteFileUrlController = async (req, res) => {
+    try {
+        const filename = req.body.filename;
+        if (!filename) return res.status(404).json({ code: 404, message: 'Không tìm thấy file' });
+        const document = await Document.findById(req.params.documentId);
+        const attachFiles = document.attachFiles.filter((item) => item !== filename);
+        await Document.findByIdAndUpdate(req.params.documentId, { attachFiles: attachFiles });
+        res.status(200).json({ code: 200, message: 'Xóa file thành công' });
+    } catch (error) {
+        res.status(400).json({ code: 400, message: 'Unexpected error' });
+        console.log(error);
+    }
+};
+
 // Upload document controller
 export const updateDocumentController = async (req, res) => {
     try {
