@@ -155,7 +155,7 @@ export const deleteManyDocumentController = async (req, res) => {
 // Get all document controller
 export const getAllDocumentController = async (req, res) => {
     try {
-        let { page, limit, documentName, code, type, status, level, sendDate } = req.query;
+        let { page, limit, documentName, code, type, status, level, sendDate, documentIn } = req.query;
         const queryFilters = {};
 
         if (documentName) {
@@ -182,6 +182,10 @@ export const getAllDocumentController = async (req, res) => {
             queryFilters.sendDate = sendDate;
         }
 
+        if (documentIn) {
+            queryFilters.documentIn = documentIn;
+        }
+
         if (!page) page = 1;
         if (!limit) limit = 5;
         const skip = (page - 1) * 5;
@@ -190,15 +194,12 @@ export const getAllDocumentController = async (req, res) => {
 
         const allDocuments = await Document.find(queryFilters);
 
-        const documentIn = documents.filter((dci) => dci.documentIn === true);
-        const documentOut = documents.filter((dco) => dco.documentIn === false);
-
         const allDocumentIn = allDocuments.filter((adci) => adci.documentIn === true);
         const allDocumentOut = allDocuments.filter((adco) => adco.documentIn === false);
+
         res.status(200).json({
             code: 200,
-            documentIn: documentIn,
-            documentOut: documentOut,
+            documents: documents,
             allDocumentIn: allDocumentIn,
             allDocumentOut: allDocumentOut,
         });
