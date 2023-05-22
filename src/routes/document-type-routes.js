@@ -9,7 +9,7 @@ import {
     getDocumentTypeByIdController,
 } from '../controllers/document-type-controllers.js';
 import { verifyToken } from '../middlewares/verifyToken.js';
-import { isModerator } from '../middlewares/role.js';
+import { isMember, isModerator } from '../middlewares/role.js';
 
 const router = Router();
 
@@ -29,7 +29,7 @@ router.delete('/delete/:documentTypeId', verifyToken, isModerator, deleteDocumen
 router.post('/delete-many', verifyToken, isModerator, deleteManyDocumentTypeController);
 
 // Get all list department route
-router.get('/get-all', verifyToken, isModerator, getAllDocumentTypeController);
+router.get('/get-all', verifyToken, isMember, getAllDocumentTypeController);
 
 // Get department by ID
 router.get('/get/:documentTypeId', verifyToken, isModerator, getDocumentTypeByIdController);
