@@ -40,7 +40,7 @@ router.post('/delete-many', verifyToken, isAdmin, deleteManyUserController);
 router.patch('/change-password', verifyToken, isMember, changePasswordController);
 
 // Get all list users route
-router.get('/get-all', verifyToken, isAdmin, getAllUserController);
+router.get('/get-all', verifyToken, isMember, getAllUserController);
 
 // Get user by ID route
 router.get('/get/:userId', verifyToken, isAdmin, getUserByIdController);
