@@ -5,6 +5,7 @@ import {
     deleteFileUrlController,
     updateTaskController,
     deleteTaskController,
+    deleteManyTaskController,
     getAllTaskController,
     getTaskByIdController,
 } from '../controllers/task-controllers.js';
@@ -27,6 +28,9 @@ router.put('/update/:taskId', updateTaskController);
 
 // Delete task route
 router.delete('/delete/:taskId', deleteTaskController);
+
+// Delete many task route
+router.post('/delete-many', deleteManyTaskController);
 
 // Get all task route
 router.get('/get-all', verifyToken, getAllTaskController);

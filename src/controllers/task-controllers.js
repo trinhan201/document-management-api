@@ -101,6 +101,24 @@ export const deleteTaskController = async (req, res) => {
     }
 };
 
+// Delete many task controller
+export const deleteManyTaskController = async (req, res) => {
+    try {
+        // const currentUser = await User.findById(req.user._id);
+        // if (currentUser.isActived === false)
+        //     return res.status(403).json({ code: 403, message: 'Tài khoản tạm thời bị vô hiệu hóa' });
+        const arrayId = req.body.arrayId;
+        await Task.deleteMany({ _id: arrayId });
+        res.status(200).json({
+            code: 200,
+            message: 'Những công việc được chọn đã bị xóa',
+        });
+    } catch (error) {
+        res.status(400).json({ code: 400, message: 'Unexpected error' });
+        console.log(error);
+    }
+};
+
 // Get all task controller
 export const getAllTaskController = async (req, res) => {
     try {
@@ -113,14 +131,12 @@ export const getAllTaskController = async (req, res) => {
         const tasks = await Task.find({}).sort({ createdAt: -1 }).skip(skip).limit(limit);
         const allTasks = await Task.find({});
 
-        const memberTasks = await Task.find({}).sort({ createdAt: -1 }).skip(skip).limit(limit);
         const allMemberTasks = allTasks.filter((t) => t.assignTo.includes(req.user._id));
 
         res.status(200).json({
             code: 200,
             tasks: tasks,
             allTasks: allTasks,
-            memberTasks: memberTasks,
             allMemberTasks: allMemberTasks,
         });
     } catch (error) {
