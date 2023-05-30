@@ -55,7 +55,7 @@ export const updateUserController = async (req, res) => {
                 const userUpdate = await User.findByIdAndUpdate(req.params.userId, updateProps, {
                     new: true,
                 });
-                res.status(200).json({ code: 200, message: 'Thông tin người dùng đã được cập nhật', data: userUpdate });
+                res.status(200).json({ code: 200, message: 'Thông tin người dùng đã được cập nhật' });
             } catch (error) {
                 res.status(400).json({ code: 400, message: 'Unexpected error' });
                 console.log(error);
@@ -67,7 +67,6 @@ export const updateUserController = async (req, res) => {
                     res.status(200).json({
                         code: 200,
                         message: 'Thông tin người dùng đã được cập nhật',
-                        data: userUpdate,
                     });
                 } catch (error) {
                     res.status(400).json({ code: 400, message: 'Unexpected error' });
@@ -208,6 +207,7 @@ export const getAllUserController = async (req, res) => {
                   }
                 : {},
         )
+            .select('-password')
             .sort({ createdAt: -1 })
             .skip(skip)
             .limit(limit);
@@ -221,7 +221,7 @@ export const getAllUserController = async (req, res) => {
                       ],
                   }
                 : {},
-        );
+        ).select('-password');
         users = users.filter((item) => item.role !== 'Admin');
         allUsers = allUsers.filter((item) => item.role !== 'Admin');
         res.status(200).json({ code: 200, data: users, allUsers: allUsers });
@@ -234,7 +234,7 @@ export const getAllUserController = async (req, res) => {
 // Get user by ID controller
 export const getUserByIdController = async (req, res) => {
     try {
-        const user = await User.findById(req.params.userId);
+        const user = await User.findById(req.params.userId).select('-password');
         if (!user) {
             return res.status(404).json({ code: 404, message: 'User not found' });
         }
@@ -264,6 +264,7 @@ export const changeAvatarController = async (req, res) => {
     }
 };
 
+// Remove avatar controller
 export const removeAvatar = async (req, res) => {
     const fileName = req.params.name;
     const directoryPath = 'uploads/';
@@ -278,4 +279,15 @@ export const removeAvatar = async (req, res) => {
         await User.findOneAndUpdate({ _id: userId }, { avatar: '' });
         res.status(200).json({ code: 200, message: 'Đã xóa ảnh nền' });
     });
+};
+
+// Get some public infomation of all users controller
+export const getPublicInfoController = async (req, res) => {
+    try {
+        const users = await User.find({}).sort({ createdAt: -1 }).select('fullName avatar');
+        res.status(200).json({ code: 200, message: 'Lấy thông tin công khai của user thành công', data: users });
+    } catch (error) {
+        res.status(400).json({ code: 400, message: 'Unexpected error' });
+        console.log(error);
+    }
 };

@@ -11,6 +11,7 @@ import {
     deleteManyUserController,
     changeAvatarController,
     removeAvatar,
+    getPublicInfoController,
 } from '../controllers/user-controllers.js';
 import { verifyToken } from '../middlewares/verifyToken.js';
 import { isAdmin, isMember } from '../middlewares/role.js';
@@ -40,7 +41,7 @@ router.post('/delete-many', verifyToken, isAdmin, deleteManyUserController);
 router.patch('/change-password', verifyToken, isMember, changePasswordController);
 
 // Get all list users route
-router.get('/get-all', verifyToken, isMember, getAllUserController);
+router.get('/get-all', verifyToken, isAdmin, getAllUserController);
 
 // Get user by ID route
 router.get('/get/:userId', verifyToken, isAdmin, getUserByIdController);
@@ -48,6 +49,10 @@ router.get('/get/:userId', verifyToken, isAdmin, getUserByIdController);
 // Change avatar route
 router.post('/change-avatar', verifyToken, upload.single('myFile'), changeAvatarController);
 
+// Remove avatar route
 router.delete('/file/:name', verifyToken, removeAvatar);
+
+// Get some public infomation of all users route
+router.get('/public-info', verifyToken, getPublicInfoController);
 
 export default router;
