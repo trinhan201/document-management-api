@@ -207,7 +207,7 @@ export const getAllUserController = async (req, res) => {
                   }
                 : {},
         )
-            .select('-password')
+            .select('-password -refreshTokens')
             .sort({ createdAt: -1 })
             .skip(skip)
             .limit(limit);

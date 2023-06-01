@@ -4,10 +4,12 @@ import {
     uploadFileController,
     deleteFileUrlController,
     updateTaskController,
+    updateTaskProgressController,
     deleteTaskController,
     deleteManyTaskController,
     getAllTaskController,
     getTaskByIdController,
+    submitResourceController,
 } from '../controllers/task-controllers.js';
 import upload from '../utils/uploadFile.js';
 import { verifyToken } from '../middlewares/verifyToken.js';
@@ -26,6 +28,9 @@ router.patch('/delete-file-url/:taskId', deleteFileUrlController);
 // Update task route
 router.put('/update/:taskId', updateTaskController);
 
+// Update task progress route
+router.patch('/update-progress/:taskId', updateTaskProgressController);
+
 // Delete task route
 router.delete('/delete/:taskId', deleteTaskController);
 
@@ -37,5 +42,8 @@ router.get('/get-all', verifyToken, getAllTaskController);
 
 // Get task by ID route
 router.get('/get/:taskId', getTaskByIdController);
+
+// Submit resource route
+router.post('/submit/:taskId', verifyToken, upload.array('myFile', 10), submitResourceController);
 
 export default router;

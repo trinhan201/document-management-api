@@ -36,7 +36,7 @@ const DocumentSchema = new Schema(
         },
         sendDate: {
             type: String,
-            required: true,
+            // required: true,
             trim: true,
         },
         level: {
@@ -54,7 +54,7 @@ const DocumentSchema = new Schema(
         },
         currentLocation: {
             type: String,
-            required: true,
+            // required: true,
             trim: true,
         },
         attachFiles: {

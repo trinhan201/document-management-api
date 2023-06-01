@@ -24,6 +24,11 @@ const TaskSchema = new Schema(
             type: String,
             default: 'Khởi tạo',
         },
+        status: {
+            type: String,
+            required: true,
+            default: 'Còn hạn',
+        },
         refLink: {
             type: String,
             required: true,
@@ -42,6 +47,10 @@ const TaskSchema = new Schema(
         assignTo: {
             type: Array,
             trim: true,
+            default: [],
+        },
+        resources: {
+            type: Array,
             default: [],
         },
     },
