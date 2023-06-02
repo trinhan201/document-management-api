@@ -223,3 +223,41 @@ export const submitResourceController = async (req, res) => {
         console.log(error);
     }
 };
+
+// Change assignee role controller
+export const changeAssignRoleController = async (req, res) => {
+    try {
+        const taskId = req.params.taskId;
+        const { userId, flag } = req.body;
+        await Task.findOneAndUpdate({ _id: taskId, 'assignTo.flag': 'Leader' }, { 'assignTo.$.flag': 'Support' });
+        await Task.findOneAndUpdate({ _id: taskId, 'assignTo.value': userId }, { 'assignTo.$.flag': flag });
+        res.status(200).json({ code: 200, message: 'Đã phân công leader' });
+    } catch (error) {
+        res.status(400).json({ code: 400, message: 'Unexpected error' });
+        console.log(error);
+    }
+};
+
+// Delete file url controller
+export const deleteSubmitFileUrlController = async (req, res) => {
+    try {
+        // const currentUser = await User.findById(req.user._id);
+        // if (currentUser.isActived === false)
+        //     return res.status(403).json({ code: 403, message: 'Tài khoản tạm thời bị vô hiệu hóa' });
+        const taskId = req.params.taskId;
+        const filename = req.body.filename;
+        if (!filename) return res.status(404).json({ code: 404, message: 'Không tìm thấy file' });
+
+        const task = await Task.findById(taskId);
+        const memberResources = task.resources.find((item) => item.userId === req.user._id);
+        const resources = memberResources.resources.filter((item) => item !== filename);
+        await Task.findOneAndUpdate(
+            { _id: taskId, 'resources.userId': req.user._id },
+            { 'resources.$.resources': resources },
+        );
+        res.status(200).json({ code: 200, message: 'Hủy nộp file thành công' });
+    } catch (error) {
+        res.status(400).json({ code: 400, message: 'Unexpected error' });
+        console.log(error);
+    }
+};

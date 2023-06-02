@@ -11,6 +11,9 @@ const TaskSchema = new Schema(
             maxlength: 500,
             trim: true,
         },
+        type: {
+            type: String,
+        },
         dueDate: {
             type: String,
             required: true,
@@ -43,6 +46,9 @@ const TaskSchema = new Schema(
             type: Array,
             trim: true,
             default: [],
+        },
+        leader: {
+            type: Object,
         },
         assignTo: {
             type: Array,

@@ -10,6 +10,8 @@ import {
     getAllTaskController,
     getTaskByIdController,
     submitResourceController,
+    changeAssignRoleController,
+    deleteSubmitFileUrlController,
 } from '../controllers/task-controllers.js';
 import upload from '../utils/uploadFile.js';
 import { verifyToken } from '../middlewares/verifyToken.js';
@@ -45,5 +47,11 @@ router.get('/get/:taskId', getTaskByIdController);
 
 // Submit resource route
 router.post('/submit/:taskId', verifyToken, upload.array('myFile', 10), submitResourceController);
+
+// Change role of assignee route
+router.patch('/change-assign-role/:taskId', changeAssignRoleController);
+
+// Delete submit file url route
+router.patch('/delete-submit-file-url/:taskId', verifyToken, deleteSubmitFileUrlController);
 
 export default router;
