@@ -217,6 +217,10 @@ export const submitResourceController = async (req, res) => {
                 { $push: { 'resources.$.resources': value } },
             );
         }
+        await Task.findOneAndUpdate(
+            { _id: taskId, 'resources.userId': req.user._id },
+            { 'resources.$.isSubmit': true },
+        );
         res.status(200).json({ code: 200, message: 'Nộp file thành công' });
     } catch (error) {
         res.status(400).json({ code: 400, message: 'Unexpected error' });
@@ -254,6 +258,25 @@ export const deleteSubmitFileUrlController = async (req, res) => {
         await Task.findOneAndUpdate(
             { _id: taskId, 'resources.userId': req.user._id },
             { 'resources.$.resources': resources },
+        );
+        res.status(200).json({ code: 200, message: 'Hủy nộp file thành công' });
+    } catch (error) {
+        res.status(400).json({ code: 400, message: 'Unexpected error' });
+        console.log(error);
+    }
+};
+
+// unSubmit resource controller
+export const unsubmitResourceController = async (req, res) => {
+    try {
+        // const currentUser = await User.findById(req.user._id);
+        // if (currentUser.isActived === false)
+        //     return res.status(403).json({ code: 403, message: 'Tài khoản tạm thời bị vô hiệu hóa' });
+        const taskId = req.params.taskId;
+
+        await Task.findOneAndUpdate(
+            { _id: taskId, 'resources.userId': req.user._id },
+            { 'resources.$.isSubmit': false },
         );
         res.status(200).json({ code: 200, message: 'Hủy nộp file thành công' });
     } catch (error) {

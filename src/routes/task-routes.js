@@ -12,6 +12,7 @@ import {
     submitResourceController,
     changeAssignRoleController,
     deleteSubmitFileUrlController,
+    unsubmitResourceController,
 } from '../controllers/task-controllers.js';
 import upload from '../utils/uploadFile.js';
 import { verifyToken } from '../middlewares/verifyToken.js';
@@ -53,5 +54,8 @@ router.patch('/change-assign-role/:taskId', changeAssignRoleController);
 
 // Delete submit file url route
 router.patch('/delete-submit-file-url/:taskId', verifyToken, deleteSubmitFileUrlController);
+
+// unSubmit resource route
+router.patch('/unsubmit/:taskId', verifyToken, unsubmitResourceController);
 
 export default router;
