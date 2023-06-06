@@ -284,3 +284,20 @@ export const unsubmitResourceController = async (req, res) => {
         console.log(error);
     }
 };
+
+// upadte deadline controller
+export const updateDeadLineController = async (req, res) => {
+    try {
+        // const currentUser = await User.findById(req.user._id);
+        // if (currentUser.isActived === false)
+        //     return res.status(403).json({ code: 403, message: 'Tài khoản tạm thời bị vô hiệu hóa' });
+        const taskId = req.params.taskId;
+        const status = req.body.status;
+
+        await Task.findOneAndUpdate({ _id: taskId }, { status: status });
+        res.status(200).json({ code: 200, message: 'Thay đổi trạng thái deadline thành công' });
+    } catch (error) {
+        res.status(400).json({ code: 400, message: 'Unexpected error' });
+        console.log(error);
+    }
+};
