@@ -6,7 +6,7 @@ export const createTaskController = async (req, res) => {
         const newTask = new Task(req.body);
 
         await newTask.save();
-        res.status(200).json({ code: 200, message: 'Công việc được tạo thành công', data: newTask });
+        res.status(200).json({ code: 200, message: 'Công việc được tạo thành công', data: newTask, newTask: newTask });
     } catch (error) {
         console.log(error);
         res.status(400).json({ code: 400, message: 'Unexpected error' });
