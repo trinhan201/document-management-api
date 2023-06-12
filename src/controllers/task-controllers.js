@@ -206,6 +206,8 @@ export const submitResourceController = async (req, res) => {
         //     return res.status(403).json({ code: 403, message: 'Tài khoản tạm thời bị vô hiệu hóa' });
         const taskId = req.params.taskId;
         const files = req.files;
+        const currTask = await Task.findById(taskId);
+
         if (!files) return res.status(400).json({ code: 400, message: 'Hãy chọn ít nhất 1 file' });
         const fileUrls = files.map((file) => {
             return process.env.BASE_URL + `/static/${file.filename}`;
@@ -219,7 +221,7 @@ export const submitResourceController = async (req, res) => {
         }
         await Task.findOneAndUpdate(
             { _id: taskId, 'resources.userId': req.user._id },
-            { 'resources.$.isSubmit': true },
+            { 'resources.$.isSubmit': true, 'resources.$.status': currTask?.status === 'Quá hạn' ? 'Trễ' : 'Đã nộp' },
         );
         res.status(200).json({ code: 200, message: 'Nộp file thành công' });
     } catch (error) {

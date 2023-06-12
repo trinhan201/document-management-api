@@ -21,37 +21,37 @@ import { verifyToken } from '../middlewares/verifyToken.js';
 const router = Router();
 
 // Create task route
-router.post('/create', createTaskController);
+router.post('/create', verifyToken, createTaskController);
 
 // Upload file route
-router.post('/upload/:taskId', upload.array('myFile', 10), uploadFileController);
+router.post('/upload/:taskId', verifyToken, upload.array('myFile', 10), uploadFileController);
 
 // Delete file url route
-router.patch('/delete-file-url/:taskId', deleteFileUrlController);
+router.patch('/delete-file-url/:taskId', verifyToken, deleteFileUrlController);
 
 // Update task route
-router.put('/update/:taskId', updateTaskController);
+router.put('/update/:taskId', verifyToken, updateTaskController);
 
 // Update task progress route
-router.patch('/update-progress/:taskId', updateTaskProgressController);
+router.patch('/update-progress/:taskId', verifyToken, updateTaskProgressController);
 
 // Delete task route
-router.delete('/delete/:taskId', deleteTaskController);
+router.delete('/delete/:taskId', verifyToken, deleteTaskController);
 
 // Delete many task route
-router.post('/delete-many', deleteManyTaskController);
+router.post('/delete-many', verifyToken, deleteManyTaskController);
 
 // Get all task route
 router.get('/get-all', verifyToken, getAllTaskController);
 
 // Get task by ID route
-router.get('/get/:taskId', getTaskByIdController);
+router.get('/get/:taskId', verifyToken, getTaskByIdController);
 
 // Submit resource route
 router.post('/submit/:taskId', verifyToken, upload.array('myFile', 10), submitResourceController);
 
 // Change role of assignee route
-router.patch('/change-assign-role/:taskId', changeAssignRoleController);
+router.patch('/change-assign-role/:taskId', verifyToken, changeAssignRoleController);
 
 // Delete submit file url route
 router.patch('/delete-submit-file-url/:taskId', verifyToken, deleteSubmitFileUrlController);
