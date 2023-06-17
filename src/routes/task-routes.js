@@ -17,49 +17,50 @@ import {
 } from '../controllers/task-controllers.js';
 import upload from '../utils/uploadFile.js';
 import { verifyToken } from '../middlewares/verifyToken.js';
+import { isMember, isModerator } from '../middlewares/role.js';
 
 const router = Router();
 
 // Create task route
-router.post('/create', verifyToken, createTaskController);
+router.post('/create', verifyToken, isModerator, createTaskController);
 
 // Upload file route
-router.post('/upload/:taskId', verifyToken, upload.array('myFile', 10), uploadFileController);
+router.post('/upload/:taskId', verifyToken, isModerator, upload.array('myFile', 10), uploadFileController);
 
 // Delete file url route
-router.patch('/delete-file-url/:taskId', verifyToken, deleteFileUrlController);
+router.patch('/delete-file-url/:taskId', verifyToken, isModerator, deleteFileUrlController);
 
 // Update task route
-router.put('/update/:taskId', verifyToken, updateTaskController);
+router.put('/update/:taskId', verifyToken, isModerator, updateTaskController);
 
 // Update task progress route
-router.patch('/update-progress/:taskId', verifyToken, updateTaskProgressController);
+router.patch('/update-progress/:taskId', verifyToken, isMember, updateTaskProgressController);
 
 // Delete task route
-router.delete('/delete/:taskId', verifyToken, deleteTaskController);
+router.delete('/delete/:taskId', verifyToken, isModerator, deleteTaskController);
 
 // Delete many task route
-router.post('/delete-many', verifyToken, deleteManyTaskController);
+router.post('/delete-many', verifyToken, isModerator, deleteManyTaskController);
 
 // Get all task route
-router.get('/get-all', verifyToken, getAllTaskController);
+router.get('/get-all', verifyToken, isMember, getAllTaskController);
 
 // Get task by ID route
-router.get('/get/:taskId', verifyToken, getTaskByIdController);
+router.get('/get/:taskId', verifyToken, isMember, getTaskByIdController);
 
 // Submit resource route
-router.post('/submit/:taskId', verifyToken, upload.array('myFile', 10), submitResourceController);
+router.post('/submit/:taskId', verifyToken, isMember, upload.array('myFile', 10), submitResourceController);
 
 // Change role of assignee route
-router.patch('/change-assign-role/:taskId', verifyToken, changeAssignRoleController);
+router.patch('/change-assign-role/:taskId', verifyToken, isModerator, changeAssignRoleController);
 
 // Delete submit file url route
-router.patch('/delete-submit-file-url/:taskId', verifyToken, deleteSubmitFileUrlController);
+router.patch('/delete-submit-file-url/:taskId', verifyToken, isMember, deleteSubmitFileUrlController);
 
 // unSubmit resource route
-router.patch('/unsubmit/:taskId', verifyToken, unsubmitResourceController);
+router.patch('/unsubmit/:taskId', verifyToken, isMember, unsubmitResourceController);
 
 // update deadline route
-router.patch('/update-deadline/:taskId', verifyToken, updateDeadLineController);
+router.patch('/update-deadline/:taskId', verifyToken, isMember, updateDeadLineController);
 
 export default router;

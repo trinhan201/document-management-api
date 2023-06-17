@@ -228,6 +228,7 @@ export const getAllDocumentController = async (req, res) => {
         res.status(200).json({
             code: 200,
             documents: documents,
+            allDocuments: allDocuments,
             allDocumentIn: allDocumentIn,
             allDocumentOut: allDocumentOut,
         });

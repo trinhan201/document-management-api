@@ -1,8 +1,12 @@
 import Task from '../models/Task.js';
+import User from '../models/User.js';
 
 // Create task controller
 export const createTaskController = async (req, res) => {
     try {
+        const currentUser = await User.findById(req.user._id);
+        if (currentUser.isActived === false)
+            return res.status(403).json({ code: 403, message: 'Tài khoản tạm thời bị vô hiệu hóa' });
         const newTask = new Task(req.body);
 
         await newTask.save();
@@ -16,9 +20,9 @@ export const createTaskController = async (req, res) => {
 // Upload file controller
 export const uploadFileController = async (req, res) => {
     try {
-        // const currentUser = await User.findById(req.user._id);
-        // if (currentUser.isActived === false)
-        //     return res.status(403).json({ code: 403, message: 'Tài khoản tạm thời bị vô hiệu hóa' });
+        const currentUser = await User.findById(req.user._id);
+        if (currentUser.isActived === false)
+            return res.status(403).json({ code: 403, message: 'Tài khoản tạm thời bị vô hiệu hóa' });
         const taskId = req.params.taskId;
         const files = req.files;
 
@@ -44,9 +48,9 @@ export const uploadFileController = async (req, res) => {
 // Delete file url controller
 export const deleteFileUrlController = async (req, res) => {
     try {
-        // const currentUser = await User.findById(req.user._id);
-        // if (currentUser.isActived === false)
-        //     return res.status(403).json({ code: 403, message: 'Tài khoản tạm thời bị vô hiệu hóa' });
+        const currentUser = await User.findById(req.user._id);
+        if (currentUser.isActived === false)
+            return res.status(403).json({ code: 403, message: 'Tài khoản tạm thời bị vô hiệu hóa' });
         const filename = req.body.filename;
         if (!filename) return res.status(404).json({ code: 404, message: 'Không tìm thấy file' });
         const task = await Task.findById(req.params.taskId);
@@ -62,9 +66,9 @@ export const deleteFileUrlController = async (req, res) => {
 // Update task controller
 export const updateTaskController = async (req, res) => {
     try {
-        // const currentUser = await User.findById(req.user._id);
-        // if (currentUser.isActived === false)
-        //     return res.status(403).json({ code: 403, message: 'Tài khoản tạm thời bị vô hiệu hóa' });
+        const currentUser = await User.findById(req.user._id);
+        if (currentUser.isActived === false)
+            return res.status(403).json({ code: 403, message: 'Tài khoản tạm thời bị vô hiệu hóa' });
         const task = await Task.findById(req.params.taskId);
         if (!task) return res.status(404).json({ code: 404, message: 'Không tìm thấy công việc' });
 
@@ -84,12 +88,9 @@ export const updateTaskController = async (req, res) => {
     }
 };
 
-// Change document status controller
+// Update task progress controller
 export const updateTaskProgressController = async (req, res) => {
     try {
-        // const currentUser = await User.findById(req.user._id);
-        // if (currentUser.isActived === false)
-        //     return res.status(403).json({ code: 403, message: 'Tài khoản tạm thời bị vô hiệu hóa' });
         const taskProgress = req.body.taskProgress;
         const task = await Task.findById(req.params.taskId);
         if (!task) return res.status(404).json({ code: 404, message: 'Không tìm thấy công việc' });
@@ -113,9 +114,9 @@ export const updateTaskProgressController = async (req, res) => {
 // Delete task controller
 export const deleteTaskController = async (req, res) => {
     try {
-        // const currentUser = await User.findById(req.user._id);
-        // if (currentUser.isActived === false)
-        //     return res.status(403).json({ code: 403, message: 'Tài khoản tạm thời bị vô hiệu hóa' });
+        const currentUser = await User.findById(req.user._id);
+        if (currentUser.isActived === false)
+            return res.status(403).json({ code: 403, message: 'Tài khoản tạm thời bị vô hiệu hóa' });
         const task = await Task.findById(req.params.taskId);
         if (!task) return res.status(404).json({ code: 404, message: 'Không tìm thấy công việc' });
 
@@ -130,9 +131,9 @@ export const deleteTaskController = async (req, res) => {
 // Delete many task controller
 export const deleteManyTaskController = async (req, res) => {
     try {
-        // const currentUser = await User.findById(req.user._id);
-        // if (currentUser.isActived === false)
-        //     return res.status(403).json({ code: 403, message: 'Tài khoản tạm thời bị vô hiệu hóa' });
+        const currentUser = await User.findById(req.user._id);
+        if (currentUser.isActived === false)
+            return res.status(403).json({ code: 403, message: 'Tài khoản tạm thời bị vô hiệu hóa' });
         const arrayId = req.body.arrayId;
         await Task.deleteMany({ _id: arrayId });
         res.status(200).json({
@@ -148,7 +149,10 @@ export const deleteManyTaskController = async (req, res) => {
 // Get all task controller
 export const getAllTaskController = async (req, res) => {
     try {
-        let { page, limit, level } = req.query;
+        const currentUser = await User.findById(req.user._id);
+        if (currentUser.isActived === false)
+            return res.status(403).json({ code: 403, message: 'Tài khoản tạm thời bị vô hiệu hóa' });
+        let { page, limit, taskName, createdAt, dueDate, type, status, level } = req.query;
 
         if (!page) page = 1;
         if (!limit) limit = 5;
@@ -156,6 +160,31 @@ export const getAllTaskController = async (req, res) => {
 
         const adminFilters = {};
         const memberFilters = {};
+
+        if (taskName) {
+            adminFilters.taskName = { $regex: taskName, $options: 'i' };
+            memberFilters.taskName = { $regex: taskName, $options: 'i' };
+        }
+
+        if (createdAt) {
+            adminFilters.createdAt = createdAt;
+            memberFilters.createdAt = createdAt;
+        }
+
+        if (dueDate) {
+            adminFilters.dueDate = dueDate;
+            memberFilters.dueDate = dueDate;
+        }
+
+        if (type) {
+            adminFilters.type = type;
+            memberFilters.type = type;
+        }
+
+        if (status) {
+            adminFilters.status = status;
+            memberFilters.status = status;
+        }
 
         if (level) {
             adminFilters.level = level;
@@ -186,9 +215,9 @@ export const getAllTaskController = async (req, res) => {
 // Get task by ID route
 export const getTaskByIdController = async (req, res) => {
     try {
-        // const currentUser = await User.findById(req.user._id);
-        // if (currentUser.isActived === false)
-        //     return res.status(403).json({ code: 403, message: 'Tài khoản tạm thời bị vô hiệu hóa' });
+        const currentUser = await User.findById(req.user._id);
+        if (currentUser.isActived === false)
+            return res.status(403).json({ code: 403, message: 'Tài khoản tạm thời bị vô hiệu hóa' });
         const task = await Task.findById(req.params.taskId);
         if (!task) return res.status(404).json({ code: 404, message: 'Không tìm thấy công việc' });
         res.status(200).json({ code: 200, data: task });
@@ -201,9 +230,9 @@ export const getTaskByIdController = async (req, res) => {
 // Submit resource controller
 export const submitResourceController = async (req, res) => {
     try {
-        // const currentUser = await User.findById(req.user._id);
-        // if (currentUser.isActived === false)
-        //     return res.status(403).json({ code: 403, message: 'Tài khoản tạm thời bị vô hiệu hóa' });
+        const currentUser = await User.findById(req.user._id);
+        if (currentUser.isActived === false)
+            return res.status(403).json({ code: 403, message: 'Tài khoản tạm thời bị vô hiệu hóa' });
         const taskId = req.params.taskId;
         const files = req.files;
         const currTask = await Task.findById(taskId);
@@ -233,6 +262,9 @@ export const submitResourceController = async (req, res) => {
 // Change assignee role controller
 export const changeAssignRoleController = async (req, res) => {
     try {
+        const currentUser = await User.findById(req.user._id);
+        if (currentUser.isActived === false)
+            return res.status(403).json({ code: 403, message: 'Tài khoản tạm thời bị vô hiệu hóa' });
         const taskId = req.params.taskId;
         const { userId, flag } = req.body;
         await Task.findOneAndUpdate({ _id: taskId, 'assignTo.flag': 'Leader' }, { 'assignTo.$.flag': 'Support' });
@@ -247,9 +279,9 @@ export const changeAssignRoleController = async (req, res) => {
 // Delete file url controller
 export const deleteSubmitFileUrlController = async (req, res) => {
     try {
-        // const currentUser = await User.findById(req.user._id);
-        // if (currentUser.isActived === false)
-        //     return res.status(403).json({ code: 403, message: 'Tài khoản tạm thời bị vô hiệu hóa' });
+        const currentUser = await User.findById(req.user._id);
+        if (currentUser.isActived === false)
+            return res.status(403).json({ code: 403, message: 'Tài khoản tạm thời bị vô hiệu hóa' });
         const taskId = req.params.taskId;
         const filename = req.body.filename;
         if (!filename) return res.status(404).json({ code: 404, message: 'Không tìm thấy file' });
@@ -271,9 +303,9 @@ export const deleteSubmitFileUrlController = async (req, res) => {
 // unSubmit resource controller
 export const unsubmitResourceController = async (req, res) => {
     try {
-        // const currentUser = await User.findById(req.user._id);
-        // if (currentUser.isActived === false)
-        //     return res.status(403).json({ code: 403, message: 'Tài khoản tạm thời bị vô hiệu hóa' });
+        const currentUser = await User.findById(req.user._id);
+        if (currentUser.isActived === false)
+            return res.status(403).json({ code: 403, message: 'Tài khoản tạm thời bị vô hiệu hóa' });
         const taskId = req.params.taskId;
 
         await Task.findOneAndUpdate(
@@ -290,9 +322,6 @@ export const unsubmitResourceController = async (req, res) => {
 // upadte deadline controller
 export const updateDeadLineController = async (req, res) => {
     try {
-        // const currentUser = await User.findById(req.user._id);
-        // if (currentUser.isActived === false)
-        //     return res.status(403).json({ code: 403, message: 'Tài khoản tạm thời bị vô hiệu hóa' });
         const taskId = req.params.taskId;
         const status = req.body.status;
 

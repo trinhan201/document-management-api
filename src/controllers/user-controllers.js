@@ -284,7 +284,7 @@ export const removeAvatar = async (req, res) => {
 // Get some public infomation of all users controller
 export const getPublicInfoController = async (req, res) => {
     try {
-        const users = await User.find({}).sort({ createdAt: -1 }).select('fullName avatar');
+        const users = await User.find({}).sort({ createdAt: -1 }).select('fullName avatar role');
         res.status(200).json({ code: 200, message: 'Lấy thông tin công khai của user thành công', data: users });
     } catch (error) {
         res.status(400).json({ code: 400, message: 'Unexpected error' });

@@ -25,7 +25,7 @@ const TaskSchema = new Schema(
         },
         progress: {
             type: String,
-            default: 'Khởi tạo',
+            default: 'Đang xử lý',
         },
         status: {
             type: String,
