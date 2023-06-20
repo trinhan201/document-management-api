@@ -152,7 +152,7 @@ export const getAllTaskController = async (req, res) => {
         const currentUser = await User.findById(req.user._id);
         if (currentUser.isActived === false)
             return res.status(403).json({ code: 403, message: 'Tài khoản tạm thời bị vô hiệu hóa' });
-        let { page, limit, taskName, createdAt, dueDate, type, status, level } = req.query;
+        let { page, limit, taskName, createdAt, dueDate, type, status, level, progress } = req.query;
 
         if (!page) page = 1;
         if (!limit) limit = 5;
@@ -189,6 +189,11 @@ export const getAllTaskController = async (req, res) => {
         if (level) {
             adminFilters.level = level;
             memberFilters.level = level;
+        }
+
+        if (progress) {
+            adminFilters.progress = progress;
+            memberFilters.progress = progress;
         }
 
         memberFilters.assignTo = { $elemMatch: { value: req.user._id } };
