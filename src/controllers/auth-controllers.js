@@ -38,12 +38,12 @@ export const verifyController = async (req, res) => {
 
             const currUser = await User.findById(user._id);
             // Send password to user
-            const subject = 'Get Your Password';
-            const html = `<p> Hello ${currUser.email}, This is your random password ${user.password}</p>
-            <p>Let's change your password for security</p>
+            const subject = 'Hệ thống quản lý văn bản - Lấy mật khẩu';
+            const html = `<p>Xin chào ${currUser.email}, đây là mực khẩu mặc định của bạn <span style="color: red; font-weight: bold">${user.password}</span></p>
+            <p><b>HÃY THAY ĐỔI MẬT KHẨU ĐỂ BẢO MẬT TÀI KHOẢN</b></p>
             `;
             sendMail(currUser.email, subject, html);
-            res.status(200).send('Verified successfully, please check your inbox for password');
+            res.status(200).send('Xác thực tài khoản thành công, hãy kiểm tra email của bạn để lấy mật khẩu');
         });
     } catch (error) {
         res.status(400).json({ code: 400, message: 'Unexpected error' });
@@ -139,9 +139,9 @@ export const forgotPasswordController = async (req, res) => {
         if (!isEmailExist) return res.status(403).json({ code: 403, message: 'Email không tồn tại' });
         const userData = await User.findOne({ email: email });
         if (userData) {
-            const subject = 'For Reset Password';
+            const subject = 'Hệ thống quản lý văn bản - Đặt lại mật khẩu';
             const token = generateResetPasswordToken(userData);
-            const html = `<p> Hello ${userData.email}, Please click the link and <a href="http://localhost:3000/reset-password"> reset your password</a>`;
+            const html = `<p> Xin chào ${userData.email}, Hãy nhấn vào liên kết này và <a href="http://localhost:3000/reset-password"> đặt lại mật khẩu của bạn</a>`;
             sendMail(userData.email, subject, html);
             res.status(200).json({
                 code: 200,
