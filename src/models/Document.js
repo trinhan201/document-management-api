@@ -11,6 +11,17 @@ const DocumentSchema = new Schema(
             maxlength: 500,
             trim: true,
         },
+        number: {
+            type: String,
+            required: true,
+            trim: true,
+            unique: true,
+        },
+        sendDate: {
+            type: String,
+            required: true,
+            trim: true,
+        },
         type: {
             type: String,
             trim: true,
@@ -34,9 +45,9 @@ const DocumentSchema = new Schema(
             maxlength: 500,
             trim: true,
         },
-        sendDate: {
+        issuedDate: {
             type: String,
-            // required: true,
+            required: true,
             trim: true,
         },
         level: {

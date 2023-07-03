@@ -112,7 +112,7 @@ export const getAllDocumentTypeController = async (req, res) => {
         if (!page) page = 1;
         if (!limit) limit = 5;
 
-        const skip = (page - 1) * 5;
+        const skip = (page - 1) * limit;
 
         const documentTypes = await DocumentType.find(
             search ? { documentTypeName: { $regex: search, $options: 'i' } } : {},

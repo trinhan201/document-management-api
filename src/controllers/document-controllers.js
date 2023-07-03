@@ -7,7 +7,9 @@ export const createDocumentController = async (req, res) => {
         const currentUser = await User.findById(req.user._id);
         if (currentUser.isActived === false)
             return res.status(403).json({ code: 403, message: 'Tài khoản tạm thời bị vô hiệu hóa' });
+        const existNumber = await Document.findOne({ number: req.body.number });
         const existCode = await Document.findOne({ code: req.body.code });
+        if (existNumber) return res.status(403).json({ code: 403, message: 'Số văn bản không được trùng' });
         if (existCode) return res.status(403).json({ code: 403, message: 'Số ký hiệu không được trùng' });
         const newDocument = new Document(req.body);
 
@@ -183,11 +185,15 @@ export const getAllDocumentController = async (req, res) => {
         const currentUser = await User.findById(req.user._id);
         if (currentUser.isActived === false)
             return res.status(403).json({ code: 403, message: 'Tài khoản tạm thời bị vô hiệu hóa' });
-        let { page, limit, documentName, code, type, status, level, sendDate, documentIn } = req.query;
+        let { page, limit, documentName, note, code, type, status, level, issuedDate, documentIn } = req.query;
         const queryFilters = {};
 
         if (documentName) {
             queryFilters.documentName = { $regex: documentName, $options: 'i' };
+        }
+
+        if (note) {
+            queryFilters.note = { $regex: note, $options: 'i' };
         }
 
         if (code) {
@@ -206,8 +212,8 @@ export const getAllDocumentController = async (req, res) => {
             queryFilters.level = level;
         }
 
-        if (sendDate) {
-            queryFilters.sendDate = sendDate;
+        if (issuedDate) {
+            queryFilters.issuedDate = issuedDate;
         }
 
         if (documentIn) {
@@ -216,7 +222,7 @@ export const getAllDocumentController = async (req, res) => {
 
         if (!page) page = 1;
         if (!limit) limit = 5;
-        const skip = (page - 1) * 5;
+        const skip = (page - 1) * limit;
 
         const documents = await Document.find(queryFilters).sort({ createdAt: -1 }).skip(skip).limit(limit);
 

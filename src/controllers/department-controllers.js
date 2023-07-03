@@ -108,7 +108,7 @@ export const getAllDepartmentController = async (req, res) => {
         if (!page) page = 1;
         if (!limit) limit = 5;
 
-        const skip = (page - 1) * 5;
+        const skip = (page - 1) * limit;
 
         const departments = await Department.find(search ? { departmentName: { $regex: search, $options: 'i' } } : {})
             .sort({ createdAt: -1 })

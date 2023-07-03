@@ -195,7 +195,7 @@ export const getAllUserController = async (req, res) => {
         let { page, limit, search } = req.query;
         if (!page) page = 1;
         if (!limit) limit = 5;
-        const skip = (page - 1) * 5;
+        const skip = (page - 1) * limit;
         let users = await User.find(
             search
                 ? {
