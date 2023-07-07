@@ -9,12 +9,12 @@ import { verifyToken } from '../middlewares/verifyToken.js';
 const router = Router();
 
 // Create notification route
-router.post('/create', createNotificationController);
+router.post('/create', verifyToken, createNotificationController);
 
 // Create notification route
 router.get('/get-all', verifyToken, getAllNotificationController);
 
 // change notification status route
-router.patch('/change-status/:notificationId', changeNotificationStatusController);
+router.patch('/change-status/:notificationId', verifyToken, changeNotificationStatusController);
 
 export default router;

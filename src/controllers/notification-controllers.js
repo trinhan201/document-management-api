@@ -1,6 +1,6 @@
 import Notification from '../models/Notification.js';
 
-// Create department controller
+// Create notification controller
 export const createNotificationController = async (req, res) => {
     try {
         const newNotification = new Notification(req.body);

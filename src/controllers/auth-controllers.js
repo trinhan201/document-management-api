@@ -96,7 +96,7 @@ export const refreshController = async (req, res) => {
 
     const refreshToken = req.body.token;
     if (!refreshToken) return res.status(401).json({ code: 401, message: 'You are not authenticated!' });
-    if (!currUser.refreshTokens.includes(refreshToken)) {
+    if (!currUser?.refreshTokens?.includes(refreshToken)) {
         return res.status(403).json({ code: 403, message: 'Refresh token is not valid!' });
     }
     jwt.verify(refreshToken, process.env.REFRESH_SECRET, async (err, user) => {

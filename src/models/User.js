@@ -55,6 +55,10 @@ const UserSchema = new Schema(
             type: Boolean,
             default: false,
         },
+        isReqChangeInfo: {
+            type: Boolean,
+            default: false,
+        },
     },
     {
         timestamps: true,

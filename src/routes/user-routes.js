@@ -12,6 +12,7 @@ import {
     changeAvatarController,
     removeAvatar,
     getPublicInfoController,
+    changeReqInfoStatusController,
 } from '../controllers/user-controllers.js';
 import { verifyToken } from '../middlewares/verifyToken.js';
 import { isAdmin, isMember } from '../middlewares/role.js';
@@ -54,5 +55,8 @@ router.delete('/file/:name', verifyToken, removeAvatar);
 
 // Get some public infomation of all users route
 router.get('/public-info', verifyToken, getPublicInfoController);
+
+// Change req change info status route
+router.patch('/change-req-info-status/:userId', verifyToken, isMember, changeReqInfoStatusController);
 
 export default router;

@@ -291,3 +291,16 @@ export const getPublicInfoController = async (req, res) => {
         console.log(error);
     }
 };
+
+// Change req change info status controller
+export const changeReqInfoStatusController = async (req, res) => {
+    try {
+        const userId = req.params.userId;
+        const isReqChangeInfo = req.body.isReqChangeInfo;
+        await User.findByIdAndUpdate(userId, { $set: { isReqChangeInfo: isReqChangeInfo } }, { new: true });
+        res.status(200).json({ code: 200, message: 'Thành công' });
+    } catch (error) {
+        res.status(400).json({ code: 400, message: 'Unexpected error' });
+        console.log(error);
+    }
+};
