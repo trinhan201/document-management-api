@@ -18,7 +18,8 @@ export const getAllNotificationController = async (req, res) => {
     try {
         const notifications = await Notification.find({}).sort({ createdAt: -1 });
         const final = notifications.filter((item) => item.userId === req.user._id);
-        res.status(200).json({ code: 200, data: final });
+        const notRead = final?.filter((item) => item.isRead === false);
+        res.status(200).json({ code: 200, data: final, notRead: notRead });
     } catch (error) {
         res.status(400).json({ code: 400, message: 'Unexpected error' });
         console.log(error);

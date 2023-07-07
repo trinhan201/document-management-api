@@ -39,9 +39,6 @@ export const createUserController = async (req, res) => {
 // Update user controller
 export const updateUserController = async (req, res) => {
     try {
-        const currentUser = await User.findById(req.user._id);
-        if (currentUser.isActived === false)
-            return res.status(403).json({ code: 403, message: 'Tài khoản tạm thời bị vô hiệu hóa' });
         const updateProps = {
             fullName: req.body.fullName,
             gender: req.body.gender,
@@ -50,33 +47,14 @@ export const updateUserController = async (req, res) => {
             phoneNumber: req.body.phoneNumber,
             department: req.body.department,
         };
-        if (req.user.role === 'Admin') {
-            try {
-                const userUpdate = await User.findByIdAndUpdate(req.params.userId, updateProps, {
-                    new: true,
-                });
-                res.status(200).json({ code: 200, message: 'Thông tin người dùng đã được cập nhật' });
-            } catch (error) {
-                res.status(400).json({ code: 400, message: 'Unexpected error' });
-                console.log(error);
-            }
-        } else {
-            if (req.params.userId === req.user._id) {
-                try {
-                    const userUpdate = await User.findByIdAndUpdate(req.params.userId, updateProps, { new: true });
-                    res.status(200).json({
-                        code: 200,
-                        message: 'Thông tin người dùng đã được cập nhật',
-                    });
-                } catch (error) {
-                    res.status(400).json({ code: 400, message: 'Unexpected error' });
-                }
-            } else {
-                return res.status(403).json({
-                    code: 403,
-                    message: 'You can update only your account',
-                });
-            }
+        try {
+            await User.findByIdAndUpdate(req.params.userId, updateProps, {
+                new: true,
+            });
+            res.status(200).json({ code: 200, message: 'Thông tin người dùng đã được cập nhật' });
+        } catch (error) {
+            res.status(400).json({ code: 400, message: 'Unexpected error' });
+            console.log(error);
         }
     } catch (error) {
         res.status(400).json({ code: 400, message: 'Unexpected error' });

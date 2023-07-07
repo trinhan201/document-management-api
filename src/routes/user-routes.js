@@ -24,7 +24,7 @@ const router = Router();
 router.post('/create', verifyToken, isAdmin, createUserController);
 
 // Update user info route
-router.put('/update/:userId', verifyToken, isMember, updateUserController);
+router.put('/update/:userId', verifyToken, isAdmin, updateUserController);
 
 // Update role route
 router.patch('/update-role/:userId', verifyToken, isAdmin, updateRoleController);
