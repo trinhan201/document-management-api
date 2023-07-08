@@ -3,6 +3,7 @@ import {
     createNotificationController,
     getAllNotificationController,
     changeNotificationStatusController,
+    deleteNotificationController,
 } from '../controllers/notification-controllers.js';
 import { verifyToken } from '../middlewares/verifyToken.js';
 
@@ -14,7 +15,10 @@ router.post('/create', verifyToken, createNotificationController);
 // Create notification route
 router.get('/get-all', verifyToken, getAllNotificationController);
 
-// change notification status route
+// Change notification status route
 router.patch('/change-status/:notificationId', verifyToken, changeNotificationStatusController);
+
+// Delete notification route
+router.delete('/delete/:notificationId', verifyToken, deleteNotificationController);
 
 export default router;

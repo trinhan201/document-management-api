@@ -39,3 +39,18 @@ export const changeNotificationStatusController = async (req, res) => {
         console.log(error);
     }
 };
+
+// Delete notification controller
+export const deleteNotificationController = async (req, res) => {
+    try {
+        const notificationId = req.params.notificationId;
+        const notification = await Notification.findById(notificationId);
+        if (!notification) return res.status(404).json({ code: 404, message: 'Không tìm thấy thông báo' });
+
+        await Notification.findByIdAndDelete(notificationId);
+        res.status(200).json({ code: 200, message: 'Đã xóa thành công thông báo' });
+    } catch (error) {
+        res.status(400).json({ code: 400, message: 'Unexpected error' });
+        console.log(error);
+    }
+};
