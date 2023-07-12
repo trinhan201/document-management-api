@@ -34,7 +34,6 @@ const TaskSchema = new Schema(
         },
         refLink: {
             type: String,
-            required: true,
             trim: true,
         },
         desc: {

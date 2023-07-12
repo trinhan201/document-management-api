@@ -65,7 +65,6 @@ const DocumentSchema = new Schema(
         },
         currentLocation: {
             type: String,
-            // required: true,
             trim: true,
         },
         attachFiles: {
