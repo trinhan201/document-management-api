@@ -72,6 +72,14 @@ const DocumentSchema = new Schema(
             trim: true,
             default: [],
         },
+        isHaveTask: {
+            type: Boolean,
+            default: false,
+        },
+        assignTo: {
+            type: Array,
+            default: [],
+        },
     },
     {
         timestamps: true,

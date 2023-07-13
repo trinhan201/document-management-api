@@ -231,11 +231,16 @@ export const getAllDocumentController = async (req, res) => {
         const allDocumentIn = allDocuments.filter((adci) => adci.documentIn === true);
         const allDocumentOut = allDocuments.filter((adco) => adco.documentIn === false);
 
+        const memberDocuments = documents.filter((item) => item.assignTo.find((mem) => mem.value === req.user._id));
+        const allMemberDocumentIn = allDocumentIn.filter((item) =>
+            item.assignTo.find((mem) => mem.value === req.user._id),
+        );
+
         res.status(200).json({
             code: 200,
-            documents: documents,
+            documents: req.user.role === 'Member' ? memberDocuments : documents,
             allDocuments: allDocuments,
-            allDocumentIn: allDocumentIn,
+            allDocumentIn: req.user.role === 'Member' ? allMemberDocumentIn : allDocumentIn,
             allDocumentOut: allDocumentOut,
         });
     } catch (error) {
@@ -252,7 +257,29 @@ export const getDocumentByIdController = async (req, res) => {
             return res.status(403).json({ code: 403, message: 'Tài khoản tạm thời bị vô hiệu hóa' });
         const document = await Document.findById(req.params.documentId);
         if (!document) return res.status(404).json({ code: 404, message: 'Không tìm thấy văn bản' });
-        res.status(200).json({ code: 200, data: document });
+        // const getFinalDocument = () => {
+        //     if (
+        //         req.user.role === 'Admin' ||
+        //         req.user.role === 'Moderator' ||
+        //         document?.assignTo?.find((mem) => mem.value === req.user._id)
+        //     ) {
+        //         return document;
+        //     } else {
+        //         return res.status(403).json({ code: 403, message: 'Không có quyền truy cặp' });
+        //     }
+        // };
+        if (
+            req.user.role === 'Admin' ||
+            req.user.role === 'Moderator' ||
+            document?.assignTo?.find((mem) => mem.value === req.user._id)
+        ) {
+            res.status(200).json({
+                code: 200,
+                data: document,
+            });
+        } else {
+            res.status(403).json({ code: 403, message: 'Không có quyền truy cặp' });
+        }
     } catch (error) {
         res.status(400).json({ code: 400, message: 'Unexpected error' });
         console.log(error);
