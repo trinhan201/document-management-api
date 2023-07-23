@@ -1,7 +1,11 @@
 import Comment from '../models/Comment.js';
+import User from '../models/User.js';
 
 export const createCommentController = async (req, res) => {
     try {
+        const currentUser = await User.findById(req.user._id);
+        if (currentUser.isActived === false)
+            return res.status(403).json({ code: 403, message: 'Tài khoản tạm thời bị vô hiệu hóa' });
         const taskId = req.body.taskId;
         const newComment = new Comment({ ...req.body, userId: req.user._id, taskId: taskId });
 
@@ -14,6 +18,9 @@ export const createCommentController = async (req, res) => {
 
 export const updateCommentController = async (req, res) => {
     try {
+        const currentUser = await User.findById(req.user._id);
+        if (currentUser.isActived === false)
+            return res.status(403).json({ code: 403, message: 'Tài khoản tạm thời bị vô hiệu hóa' });
         const comment = await Comment.findById(req.params.commentId);
         if (!comment) return res.status(404).json({ code: 404, message: 'Comment not found' });
         if (comment.userId !== req.user._id) return res.status(404).json({ code: 403, message: 'Unauthorized' });
@@ -33,6 +40,9 @@ export const updateCommentController = async (req, res) => {
 
 export const deleteCommentController = async (req, res) => {
     try {
+        const currentUser = await User.findById(req.user._id);
+        if (currentUser.isActived === false)
+            return res.status(403).json({ code: 403, message: 'Tài khoản tạm thời bị vô hiệu hóa' });
         const comment = await Comment.findById(req.params.commentId);
         if (!comment) return res.status(404).json({ code: 404, message: 'Comment not found' });
         if (comment.userId !== req.user._id) return res.status(404).json({ code: 403, message: 'Unauthorized' });
@@ -46,6 +56,9 @@ export const deleteCommentController = async (req, res) => {
 
 export const getAllCommentController = async (req, res) => {
     try {
+        const currentUser = await User.findById(req.user._id);
+        if (currentUser.isActived === false)
+            return res.status(403).json({ code: 403, message: 'Tài khoản tạm thời bị vô hiệu hóa' });
         const comments = await Comment.find({}).sort({ createdAt: -1 });
         res.status(200).json({ code: 200, message: 'Successfully', data: comments });
     } catch (error) {
@@ -55,6 +68,9 @@ export const getAllCommentController = async (req, res) => {
 
 export const getCommentByIdController = async (req, res) => {
     try {
+        const currentUser = await User.findById(req.user._id);
+        if (currentUser.isActived === false)
+            return res.status(403).json({ code: 403, message: 'Tài khoản tạm thời bị vô hiệu hóa' });
         const comment = await Comment.findById(req.params.commentId);
         if (!comment) return res.status(404).json({ code: 404, message: 'Comment not found' });
 

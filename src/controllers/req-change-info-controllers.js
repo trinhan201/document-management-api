@@ -1,8 +1,12 @@
 import ReqChangeInfo from '../models/ReqChangeInfo.js';
+import User from '../models/User.js';
 
 // Create req data controller
 export const createReqChangeInfoController = async (req, res) => {
     try {
+        const currentUser = await User.findById(req.user._id);
+        if (currentUser.isActived === false)
+            return res.status(403).json({ code: 403, message: 'Tài khoản tạm thời bị vô hiệu hóa' });
         const newReqData = new ReqChangeInfo(req.body);
 
         await newReqData.save();

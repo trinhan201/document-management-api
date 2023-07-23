@@ -8,6 +8,7 @@ import taskRoutes from './task-routes.js';
 import notificationRoutes from './notification-routes.js';
 import commentRoutes from './comment-routes.js';
 import reqChangeInfoRoutes from './req-change-info-routes.js';
+import taskTypeRoutes from './task-type-routes.js';
 
 const router = Router();
 
@@ -20,5 +21,6 @@ router.use('/task', taskRoutes);
 router.use('/notification', notificationRoutes);
 router.use('/comment', commentRoutes);
 router.use('/req-change-info', reqChangeInfoRoutes);
+router.use('/task-type', taskTypeRoutes);
 
 export default router;
