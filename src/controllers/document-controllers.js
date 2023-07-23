@@ -79,7 +79,7 @@ export const updateDocumentController = async (req, res) => {
         const documentUpdate = await Document.findByIdAndUpdate(
             req.params.documentId,
             {
-                $set: req.body,
+                $set: { ...req.body, assignTo: [...document.assignTo, ...req.body.assignTo] },
             },
             {
                 new: true,
