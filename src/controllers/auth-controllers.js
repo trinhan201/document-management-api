@@ -20,7 +20,7 @@ const generateRefreshToken = (user) => {
 // Generate reset password token
 const generateResetPasswordToken = (user) => {
     return jwt.sign({ _id: user._id, email: user.email }, process.env.RESET_PASS_SECRET, {
-        expiresIn: '300s',
+        expiresIn: '600s',
     });
 };
 

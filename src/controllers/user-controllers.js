@@ -8,7 +8,7 @@ import sendMail from '../utils/email.js';
 // Generate verify email token
 const generateVerifyEmailToken = (user, randomPass) => {
     return jwt.sign({ _id: user._id, password: randomPass }, process.env.VERIFY_EMAIL_SECRET, {
-        expiresIn: '100s',
+        expiresIn: '1d',
     });
 };
 

@@ -6,6 +6,8 @@ import express from 'express';
 import cors from 'cors';
 import connectDb from './src/configs/db.js';
 import router from './src/routes/index.js';
+import { Server } from 'socket.io';
+import http from 'http';
 
 const app = express();
 const port = process.env.PORT;
@@ -24,6 +26,55 @@ app.use('/static', express.static(path.join(__dirname, 'uploads')));
 // Routes init
 app.use('/api/v1', router);
 
-app.listen(port, () => {
+// Socket io
+const server = http.createServer(app);
+
+const io = new Server(server, {
+    cors: {
+        origin: 'http://localhost:3000',
+    },
+});
+
+let users = [];
+
+const addUser = (userId, socketId) => {
+    !users.some((user) => user.userId === userId) && users.push({ userId, socketId });
+};
+
+const removeUser = (socketId) => {
+    users = users.filter((user) => user.socketId !== socketId);
+};
+
+io.on('connection', (socket) => {
+    console.log(`user ${socket.id} connected`);
+    socket.on('addUser', (userId) => {
+        addUser(userId, socket.id);
+        io.emit('getUsers', users);
+    });
+
+    socket.on('sendNotification', ({ senderId, _id, receiverId, text, linkTask, isRead }) => {
+        console.log(receiverId);
+        console.log(_id);
+        const assignToUsers = users?.filter((item) => receiverId?.find((it) => it === item?.userId));
+        assignToUsers?.map((user) => {
+            return io.to(user?.socketId).emit('getNotification', {
+                senderId,
+                _id,
+                text,
+                receiverId: user.userId,
+                linkTask,
+                isRead,
+            });
+        });
+    });
+
+    socket.on('disconnect', () => {
+        console.log(`user ${socket.id} disconnected!`);
+        removeUser(socket.id);
+        io.emit('getUsers', users);
+    });
+});
+
+server.listen(port, () => {
     console.log('Server is running at ' + port);
 });
