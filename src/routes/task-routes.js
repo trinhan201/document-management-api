@@ -13,7 +13,7 @@ import {
     changeAssignRoleController,
     deleteSubmitFileUrlController,
     unsubmitResourceController,
-    updateDeadLineController,
+    // updateDeadLineController,
 } from '../controllers/task-controllers.js';
 import upload from '../utils/uploadFile.js';
 import { verifyToken } from '../middlewares/verifyToken.js';
@@ -61,6 +61,6 @@ router.patch('/delete-submit-file-url/:taskId', verifyToken, isMember, deleteSub
 router.patch('/unsubmit/:taskId', verifyToken, isMember, unsubmitResourceController);
 
 // update deadline route
-router.patch('/update-deadline/:taskId', verifyToken, isMember, updateDeadLineController);
+// router.patch('/update-deadline/:taskId', verifyToken, isMember, updateDeadLineController);
 
 export default router;

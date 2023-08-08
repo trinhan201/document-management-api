@@ -53,8 +53,6 @@ io.on('connection', (socket) => {
     });
 
     socket.on('sendNotification', ({ senderId, _id, receiverId, text, linkTask, isRead }) => {
-        console.log(receiverId);
-        console.log(_id);
         const assignToUsers = users?.filter((item) => receiverId?.find((it) => it === item?.userId));
         assignToUsers?.map((user) => {
             return io.to(user?.socketId).emit('getNotification', {
@@ -74,6 +72,20 @@ io.on('connection', (socket) => {
         io.emit('getUsers', users);
     });
 });
+
+export const sendNotification = (notiId, notiText, notiReceiverId, notiLinkTask) => {
+    const assignToUsers = users?.filter((item) => notiReceiverId?.find((it) => it === item?.userId));
+    assignToUsers?.map((user) => {
+        return io.to(user?.socketId).emit('getNotification', {
+            senderId: '',
+            _id: notiId,
+            text: notiText,
+            receiverId: user.userId,
+            linkTask: notiLinkTask,
+            isRead: false,
+        });
+    });
+};
 
 server.listen(port, () => {
     console.log('Server is running at ' + port);

@@ -1,5 +1,13 @@
 import Task from '../models/Task.js';
 import User from '../models/User.js';
+import Notification from '../models/Notification.js';
+import schedule from 'node-schedule';
+import { sendNotification } from '../../index.js';
+
+const getAssignToIds = (arr) => {
+    const final = arr.map((item) => item.value);
+    return final;
+};
 
 // Create task controller
 export const createTaskController = async (req, res) => {
@@ -10,6 +18,51 @@ export const createTaskController = async (req, res) => {
         const newTask = new Task(req.body);
 
         await newTask.save();
+
+        // Check deadline
+        const startDate = new Date(newTask?.createdAt);
+        const endDate = new Date(newTask?.dueDate);
+        const allDateToDo = endDate.getTime() - startDate.getTime();
+        const outDateSoon = startDate.getTime() + (allDateToDo / 3) * 2;
+
+        schedule.scheduleJob(outDateSoon, async () => {
+            await Task.findOneAndUpdate({ _id: newTask._id }, { status: 'Sắp đến hạn' });
+            const notification = `Nhiệm vụ ${newTask.taskName} sắp đến hạn`;
+            const linkTask = `${process.env.REACT_APP_BASE_URL}/tasks/detail/${newTask._id}`;
+            const newNotiId = await Promise.all(
+                newTask.assignTo?.map(async (item) => {
+                    const newNotification = new Notification({ notification, userId: item.value, linkTask });
+                    await newNotification.save();
+                    return { notiId: newNotification?._id, userId: newNotification?.userId };
+                }),
+            );
+            sendNotification(
+                newNotiId,
+                `Nhiệm vụ ${newTask?.taskName} sắp đến hạn`,
+                getAssignToIds(newTask?.assignTo),
+                `${process.env.REACT_APP_BASE_URL}/tasks/detail/${newTask._id}`,
+            );
+        });
+
+        schedule.scheduleJob(endDate, async () => {
+            await Task.findOneAndUpdate({ _id: newTask._id }, { status: 'Quá hạn' });
+            const notification = `Nhiệm vụ ${newTask.taskName} đã quá hạn`;
+            const linkTask = `${process.env.REACT_APP_BASE_URL}/tasks/detail/${newTask._id}`;
+            const newNotiId = await Promise.all(
+                newTask.assignTo?.map(async (item) => {
+                    const newNotification = new Notification({ notification, userId: item.value, linkTask });
+                    await newNotification.save();
+                    return { notiId: newNotification._id, userId: newNotification.userId };
+                }),
+            );
+            sendNotification(
+                newNotiId,
+                `Nhiệm vụ ${newTask?.taskName} đã quá hạn`,
+                getAssignToIds(newTask?.assignTo),
+                `${process.env.REACT_APP_BASE_URL}/tasks/detail/${newTask._id}`,
+            );
+        });
+
         res.status(200).json({ code: 200, message: 'Công việc được tạo thành công', data: newTask, newTask: newTask });
     } catch (error) {
         console.log(error);
@@ -81,6 +134,73 @@ export const updateTaskController = async (req, res) => {
                 new: true,
             },
         );
+
+        const oldDeadline = new Date(task?.dueDate).getTime();
+        const newDeadline = new Date(taskUpdate?.dueDate).getTime();
+
+        if (newDeadline > oldDeadline) {
+            await Task.findOneAndUpdate({ _id: taskUpdate._id }, { status: 'Còn hạn' });
+            const notification = `Nhiệm vụ ${taskUpdate.taskName} đã được gia hạn`;
+            const linkTask = `${process.env.REACT_APP_BASE_URL}/tasks/detail/${taskUpdate._id}`;
+            const newNotiId = await Promise.all(
+                taskUpdate.assignTo?.map(async (item) => {
+                    const newNotification = new Notification({ notification, userId: item.value, linkTask });
+                    await newNotification.save();
+                    return { notiId: newNotification?._id, userId: newNotification?.userId };
+                }),
+            );
+            sendNotification(
+                newNotiId,
+                `Nhiệm vụ ${taskUpdate?.taskName} đã được gia hạn`,
+                getAssignToIds(taskUpdate?.assignTo),
+                `${process.env.REACT_APP_BASE_URL}/tasks/detail/${taskUpdate._id}`,
+            );
+
+            // Check deadline
+            const startDate = new Date(taskUpdate?.updatedAt);
+            const endDate = new Date(taskUpdate?.dueDate);
+            const allDateToDo = endDate.getTime() - startDate.getTime();
+            const outDateSoon = startDate.getTime() + (allDateToDo / 3) * 2;
+
+            schedule.scheduleJob(outDateSoon, async () => {
+                await Task.findOneAndUpdate({ _id: taskUpdate._id }, { status: 'Sắp đến hạn' });
+                const notification = `Nhiệm vụ ${taskUpdate.taskName} sắp đến hạn`;
+                const linkTask = `${process.env.REACT_APP_BASE_URL}/tasks/detail/${taskUpdate._id}`;
+                const newNotiId = await Promise.all(
+                    taskUpdate.assignTo?.map(async (item) => {
+                        const newNotification = new Notification({ notification, userId: item.value, linkTask });
+                        await newNotification.save();
+                        return { notiId: newNotification?._id, userId: newNotification?.userId };
+                    }),
+                );
+                sendNotification(
+                    newNotiId,
+                    `Nhiệm vụ ${taskUpdate?.taskName} sắp đến hạn`,
+                    getAssignToIds(taskUpdate?.assignTo),
+                    `${process.env.REACT_APP_BASE_URL}/tasks/detail/${taskUpdate._id}`,
+                );
+            });
+
+            schedule.scheduleJob(endDate, async () => {
+                await Task.findOneAndUpdate({ _id: taskUpdate._id }, { status: 'Quá hạn' });
+                const notification = `Nhiệm vụ ${taskUpdate.taskName} đã quá hạn`;
+                const linkTask = `${process.env.REACT_APP_BASE_URL}/tasks/detail/${taskUpdate._id}`;
+                const newNotiId = await Promise.all(
+                    taskUpdate.assignTo?.map(async (item) => {
+                        const newNotification = new Notification({ notification, userId: item.value, linkTask });
+                        await newNotification.save();
+                        return { notiId: newNotification._id, userId: newNotification.userId };
+                    }),
+                );
+                sendNotification(
+                    newNotiId,
+                    `Nhiệm vụ ${taskUpdate?.taskName} đã quá hạn`,
+                    getAssignToIds(taskUpdate?.assignTo),
+                    `${process.env.REACT_APP_BASE_URL}/tasks/detail/${taskUpdate._id}`,
+                );
+            });
+        }
+
         res.status(200).json({ code: 200, message: 'Công việc được cặp nhật thành công', data: taskUpdate });
     } catch (error) {
         res.status(400).json({ code: 400, message: 'Unexpected error' });
@@ -324,16 +444,16 @@ export const unsubmitResourceController = async (req, res) => {
     }
 };
 
-// upadte deadline controller
-export const updateDeadLineController = async (req, res) => {
-    try {
-        const taskId = req.params.taskId;
-        const status = req.body.status;
+// // upadte deadline controller
+// export const updateDeadLineController = async (req, res) => {
+//     try {
+//         const taskId = req.params.taskId;
+//         const status = req.body.status;
 
-        await Task.findOneAndUpdate({ _id: taskId }, { status: status });
-        res.status(200).json({ code: 200, message: 'Thay đổi trạng thái deadline thành công' });
-    } catch (error) {
-        res.status(400).json({ code: 400, message: 'Unexpected error' });
-        console.log(error);
-    }
-};
+//         await Task.findOneAndUpdate({ _id: taskId }, { status: status });
+//         res.status(200).json({ code: 200, message: 'Thay đổi trạng thái deadline thành công' });
+//     } catch (error) {
+//         res.status(400).json({ code: 400, message: 'Unexpected error' });
+//         console.log(error);
+//     }
+// };
