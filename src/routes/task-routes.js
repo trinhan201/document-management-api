@@ -9,11 +9,10 @@ import {
     deleteManyTaskController,
     getAllTaskController,
     getTaskByIdController,
-    submitResourceController,
+    uploadResourceController,
     changeAssignRoleController,
     deleteSubmitFileUrlController,
-    unsubmitResourceController,
-    // updateDeadLineController,
+    changeSubmitStatusController,
 } from '../controllers/task-controllers.js';
 import upload from '../utils/uploadFile.js';
 import { verifyToken } from '../middlewares/verifyToken.js';
@@ -49,7 +48,7 @@ router.get('/get-all', verifyToken, isMember, getAllTaskController);
 router.get('/get/:taskId', verifyToken, isMember, getTaskByIdController);
 
 // Submit resource route
-router.post('/submit/:taskId', verifyToken, isMember, upload.array('myFile', 10), submitResourceController);
+router.post('/submit/:taskId', verifyToken, isMember, upload.array('myFile', 10), uploadResourceController);
 
 // Change role of assignee route
 router.patch('/change-assign-role/:taskId', verifyToken, isModerator, changeAssignRoleController);
@@ -58,9 +57,6 @@ router.patch('/change-assign-role/:taskId', verifyToken, isModerator, changeAssi
 router.patch('/delete-submit-file-url/:taskId', verifyToken, isMember, deleteSubmitFileUrlController);
 
 // unSubmit resource route
-router.patch('/unsubmit/:taskId', verifyToken, isMember, unsubmitResourceController);
-
-// update deadline route
-// router.patch('/update-deadline/:taskId', verifyToken, isMember, updateDeadLineController);
+router.patch('/unsubmit/:taskId', verifyToken, isMember, changeSubmitStatusController);
 
 export default router;

@@ -353,14 +353,13 @@ export const getTaskByIdController = async (req, res) => {
 };
 
 // Submit resource controller
-export const submitResourceController = async (req, res) => {
+export const uploadResourceController = async (req, res) => {
     try {
         const currentUser = await User.findById(req.user._id);
         if (currentUser.isActived === false)
             return res.status(403).json({ code: 403, message: 'Tài khoản tạm thời bị vô hiệu hóa' });
         const taskId = req.params.taskId;
         const files = req.files;
-        const currTask = await Task.findById(taskId);
 
         if (!files) return res.status(400).json({ code: 400, message: 'Hãy chọn ít nhất 1 file' });
         const fileUrls = files.map((file) => {
@@ -373,10 +372,7 @@ export const submitResourceController = async (req, res) => {
                 { $push: { 'resources.$.resources': value } },
             );
         }
-        await Task.findOneAndUpdate(
-            { _id: taskId, 'resources.userId': req.user._id },
-            { 'resources.$.isSubmit': true, 'resources.$.status': currTask?.status === 'Quá hạn' ? 'Trễ' : 'Đã nộp' },
-        );
+
         res.status(200).json({ code: 200, message: 'Nộp file thành công' });
     } catch (error) {
         res.status(400).json({ code: 400, message: 'Unexpected error' });
@@ -425,35 +421,27 @@ export const deleteSubmitFileUrlController = async (req, res) => {
     }
 };
 
-// unSubmit resource controller
-export const unsubmitResourceController = async (req, res) => {
+// change submit status controller
+export const changeSubmitStatusController = async (req, res) => {
     try {
         const currentUser = await User.findById(req.user._id);
         if (currentUser.isActived === false)
             return res.status(403).json({ code: 403, message: 'Tài khoản tạm thời bị vô hiệu hóa' });
         const taskId = req.params.taskId;
+        const currTask = await Task.findById(taskId);
+        const submitFlag = req.body.submitFlag;
 
         await Task.findOneAndUpdate(
             { _id: taskId, 'resources.userId': req.user._id },
-            { 'resources.$.isSubmit': false },
+            {
+                'resources.$.isSubmit': submitFlag,
+                'resources.$.status':
+                    submitFlag === true ? (currTask?.status === 'Quá hạn' ? 'Trễ' : 'Đã nộp') : 'Chưa nộp',
+            },
         );
-        res.status(200).json({ code: 200, message: 'Hủy nộp file thành công' });
+        res.status(200).json({ code: 200, message: submitFlag ? 'Nộp file thành công' : 'Hủy nộp file thành công' });
     } catch (error) {
         res.status(400).json({ code: 400, message: 'Unexpected error' });
         console.log(error);
     }
 };
-
-// // upadte deadline controller
-// export const updateDeadLineController = async (req, res) => {
-//     try {
-//         const taskId = req.params.taskId;
-//         const status = req.body.status;
-
-//         await Task.findOneAndUpdate({ _id: taskId }, { status: status });
-//         res.status(200).json({ code: 200, message: 'Thay đổi trạng thái deadline thành công' });
-//     } catch (error) {
-//         res.status(400).json({ code: 400, message: 'Unexpected error' });
-//         console.log(error);
-//     }
-// };
