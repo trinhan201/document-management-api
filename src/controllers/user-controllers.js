@@ -27,7 +27,8 @@ export const createUserController = async (req, res) => {
         await newUser.save();
         const subject = 'Hệ thống quản lý văn bản - Xác thực tài khoản người dùng';
         const token = generateVerifyEmailToken(newUser, randomPass);
-        const html = `<p>Hãy nhấn vào <a href="${process.env.BASE_URL}/api/v1/auth/verify?token=${token}"> liên kết</a> để xác thực tài khoản của bạn`;
+        const html = `<p>Hãy nhấn vào <a href="${process.env.BASE_URL}/api/v1/auth/verify?token=${token}"> liên kết</a> để xác thực tài khoản của bạn</p>
+        <p>Thời gian hiệu lực trong vòng 24 giờ</p>`;
         sendMail(newUser.email, subject, html);
         res.status(200).json({ code: 200, message: 'Tạo tài khoản thành công và email xác thực đã được gửi' });
     } catch (err) {

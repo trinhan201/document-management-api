@@ -12,15 +12,6 @@ const DocumentTypeSchema = new Schema(
             trim: true,
             unique: true,
         },
-        status: {
-            type: Boolean,
-            default: true,
-        },
-        note: {
-            type: String,
-            maxlength: 100,
-            trim: true,
-        },
     },
     {
         timestamps: true,

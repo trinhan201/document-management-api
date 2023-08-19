@@ -141,7 +141,8 @@ export const forgotPasswordController = async (req, res) => {
         if (userData) {
             const subject = 'Hệ thống quản lý văn bản - Đặt lại mật khẩu';
             const token = generateResetPasswordToken(userData);
-            const html = `<p> Xin chào ${userData.email}, Hãy nhấn vào liên kết này và <a href="http://localhost:3000/reset-password"> đặt lại mật khẩu của bạn</a>`;
+            const html = `<p> Xin chào ${userData.email}, Hãy nhấn vào <a href="${process.env.REACT_APP_BASE_URL}/reset-password">liên kết</a> này và  đặt lại mật khẩu của bạn</p>
+            <p>Thời gian hiệu lực trong vòng 10 phút</p>`;
             sendMail(userData.email, subject, html);
             res.status(200).json({
                 code: 200,
