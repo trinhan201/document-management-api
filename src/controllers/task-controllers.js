@@ -1,3 +1,4 @@
+import Document from '../models/Document.js';
 import Task from '../models/Task.js';
 import User from '../models/User.js';
 import Notification from '../models/Notification.js';
@@ -215,7 +216,7 @@ export const updateTaskProgressController = async (req, res) => {
         const task = await Task.findById(req.params.taskId);
         if (!task) return res.status(404).json({ code: 404, message: 'Không tìm thấy công việc' });
 
-        await Task.findByIdAndUpdate(
+        const updatedTask = await Task.findByIdAndUpdate(
             req.params.taskId,
             {
                 $set: { progress: taskProgress },
@@ -224,6 +225,16 @@ export const updateTaskProgressController = async (req, res) => {
                 new: true,
             },
         );
+
+        if (taskProgress === 'Hoàn thành') {
+            await Document.findOneAndUpdate(
+                { documentName: updatedTask?.refLink },
+                {
+                    $set: { status: 'Hoàn thành' },
+                },
+            );
+        }
+
         res.status(200).json({ code: 200, message: 'Thay đổi tiến trình công việc thành công' });
     } catch (error) {
         res.status(400).json({ code: 400, message: 'Unexpected error' });
