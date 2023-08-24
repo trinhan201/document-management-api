@@ -1,4 +1,5 @@
 import User from '../models/User.js';
+import Task from '../models/Task.js';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import randomstring from 'randomstring';
@@ -66,8 +67,22 @@ export const updateUserController = async (req, res) => {
 // Update role controller
 export const updateRoleController = async (req, res) => {
     try {
-        await User.findByIdAndUpdate(req.params.userId, { $set: { role: req.body.role } }, { new: true });
-        res.status(200).json({ code: 200, message: 'Thay đổi vai trò thành công' });
+        const tasks = await Task.find({});
+        const userTasks = tasks?.filter((t) =>
+            t.assignTo.find((u) => {
+                return u.value === req.params.userId;
+            }),
+        );
+        const isHaveInProgressTasks = userTasks?.filter((item) => item.progress !== 'Hoàn thành');
+        if (isHaveInProgressTasks.length !== 0) {
+            res.status(400).json({
+                code: 400,
+                message: 'Không thể thay đổi vai trò do người dùng có công việc chưa hoàn thành',
+            });
+        } else {
+            await User.findByIdAndUpdate(req.params.userId, { $set: { role: req.body.role } }, { new: true });
+            res.status(200).json({ code: 200, message: 'Thay đổi vai trò thành công' });
+        }
     } catch (error) {
         res.status(400).json({ code: 400, message: 'Unexpected error' });
         console.log(error);
