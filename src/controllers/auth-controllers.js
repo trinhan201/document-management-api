@@ -93,7 +93,6 @@ export const getCurrentUserController = async (req, res) => {
 // Refresh token controller
 export const refreshController = async (req, res) => {
     const currUser = await User.findById(req.params.userId);
-
     const refreshToken = req.body.token;
     if (!refreshToken) return res.status(401).json({ code: 401, message: 'You are not authenticated!' });
     if (!currUser?.refreshTokens?.includes(refreshToken)) {
@@ -105,7 +104,9 @@ export const refreshController = async (req, res) => {
         const newAccessToken = generateAccessToken(user);
         const newRefreshToken = generateRefreshToken(user);
 
-        await User.findByIdAndUpdate(currUser._id, { $push: { refreshTokens: newRefreshToken } });
+        const newTokenArray = currUser?.refreshTokens?.filter((token) => token !== refreshToken);
+        newTokenArray.push(newRefreshToken);
+        await User.findByIdAndUpdate(currUser._id, { refreshTokens: newTokenArray });
 
         res.status(200).json({
             accessToken: newAccessToken,
