@@ -5,6 +5,7 @@ import {
     deleteFileUrlController,
     updateTaskController,
     updateTaskProgressController,
+    undoTaskController,
     deleteTaskController,
     deleteManyTaskController,
     getAllTaskController,
@@ -34,6 +35,9 @@ router.put('/update/:taskId', verifyToken, isModerator, updateTaskController);
 
 // Update task progress route
 router.patch('/update-progress/:taskId', verifyToken, isMember, updateTaskProgressController);
+
+// Undo task route
+router.patch('/undo/:taskId', verifyToken, isMember, undoTaskController);
 
 // Delete task route
 router.delete('/delete/:taskId', verifyToken, isModerator, deleteTaskController);

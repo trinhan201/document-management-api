@@ -242,6 +242,30 @@ export const updateTaskProgressController = async (req, res) => {
     }
 };
 
+// Undo task controller
+export const undoTaskController = async (req, res) => {
+    try {
+        const isUndoTask = req.body;
+        const task = await Task.findById(req.params.taskId);
+        if (!task) return res.status(404).json({ code: 404, message: 'Không tìm thấy công việc' });
+
+        await Task.findByIdAndUpdate(
+            req.params.taskId,
+            {
+                $set: { isUndo: isUndoTask },
+            },
+            {
+                new: true,
+            },
+        );
+
+        res.status(200).json({ code: 200, message: 'Thành công' });
+    } catch (error) {
+        res.status(400).json({ code: 400, message: 'Unexpected error' });
+        console.log(error);
+    }
+};
+
 // Delete task controller
 export const deleteTaskController = async (req, res) => {
     try {

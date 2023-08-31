@@ -58,6 +58,13 @@ const TaskSchema = new Schema(
             type: Array,
             default: [],
         },
+        isUndo: {
+            type: Object,
+            default: {
+                flag: false,
+                msg: '',
+            },
+        },
     },
     {
         timestamps: true,
