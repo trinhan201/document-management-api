@@ -185,7 +185,7 @@ export const getAllDocumentController = async (req, res) => {
         const currentUser = await User.findById(req.user._id);
         if (currentUser.isActived === false)
             return res.status(403).json({ code: 403, message: 'Tài khoản tạm thời bị vô hiệu hóa' });
-        let { page, limit, documentName, note, code, type, status, level, issuedDate, documentIn } = req.query;
+        let { page, limit, documentName, note, code, type, status, level, issuedDate, documentIn, sender } = req.query;
         const queryFilters = {};
 
         if (documentName) {
@@ -218,6 +218,10 @@ export const getAllDocumentController = async (req, res) => {
 
         if (documentIn) {
             queryFilters.documentIn = documentIn;
+        }
+
+        if (sender) {
+            queryFilters.sender = sender;
         }
 
         if (!page) page = 1;
